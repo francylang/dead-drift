@@ -68,6 +68,7 @@ export function RiverScene({ hatches, density = 1, label }: RiverSceneProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: reduce ? 0 : 0.6 }}
             style={{ color: `var(--color-${hatch.order})` }}
+            fill="currentColor"
           >
             {Array.from({ length: Math.round(intensity * PER_INTENSITY * density) }, (_, i) => (
               <Riser key={i} seed={`${hatch.id}-${i}`} order={hatch.order} reduce={reduce} />

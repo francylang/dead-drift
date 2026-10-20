@@ -1,20 +1,21 @@
 import Link from "next/link";
 import styles from "./home.module.css";
+import { BRAND, ROUTES } from "@/lib/brand";
 
 // Placeholder copy — rewrite in your own voice.
 const WORK = [
   {
-    href: "/hatch",
-    title: "Hatch",
-    body: "A fly-fishing app for Colorado’s Gold Medal rivers. Drag a season ribbon through the year, watch the hatch chart ink in as you scroll; river pages combine live USGS gauges and the NWS forecast into an hourly hatch outlook.",
+    href: ROUTES.landing,
+    title: BRAND.name,
+    body: "A fly-fishing app for Colorado’s Gold Medal rivers. Live stream gauges and the NWS forecast become an hourly hatch outlook for each river, plus a ranked list of where to fish today.",
   },
   {
     href: "/storybook",
-    title: "Hatch component library",
+    title: `${BRAND.name} component library`,
     body: "Storybook with design tokens, insect glyphs, accessible form controls, and interaction tests on every component.",
   },
   {
-    href: "/hatch/river",
+    href: ROUTES.plan,
     title: "Read the river",
     body: "Set month, water temperature, and time of day; insects rise off an animated river and the fly list updates.",
   },

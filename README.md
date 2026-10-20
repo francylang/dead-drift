@@ -1,14 +1,14 @@
 # Portfolio
 
-Three pieces built around **Hatch**, an app that tells fly anglers what's hatching on Colorado's Gold Medal rivers and what to tie on.
+Three pieces built around **Dead Drift**, an app that tells fly anglers what's hatching on Colorado's Gold Medal rivers and what to tie on.
 
 | Route | Piece |
 | --- | --- |
 | `/` | Index |
-| `/hatch` | Landing page. Statewide season ribbon over a river scene, today's top three rivers, scroll-drawn hatch chart for any river. |
+| `/dead-drift` | Landing page. Statewide season ribbon over a river scene, today's top three rivers, scroll-drawn hatch chart for any river. |
 | `/rivers` | Colorado Gold Medal rivers: live flow, trend, flow vs. normal for the date, water temp, today’s best hatch. |
 | `/rivers/[slug]` | One river: conditions, hour-by-hour hatch outlook for today and tomorrow, and a planner for any other day. |
-| `/hatch/river` | Read the river. Pick any Gold Medal river; month, water temperature, and time of day drive an animated hatch and the fly list. |
+| `/plan` | Read the river. Pick any Gold Medal river; month, water temperature, and time of day drive an animated hatch and the fly list. |
 | `/storybook` | Component library. Design tokens, insect glyphs, hatch timeline, form controls, interaction + a11y tests. |
 
 Next.js 16 (App Router, Cache Components) · TypeScript · CSS Modules · [Motion](https://motion.dev) · Storybook 10
@@ -40,7 +40,7 @@ All sources are free and keyless. Every fetch is cached with `"use cache"` and f
 - **Rivers** (`src/lib/rivers.ts`): Gold Medal reaches with a USGS gauge. The Dream Stream and the Middle Fork of the South Platte only have Colorado DWR telemetry and are next.
 - **Water temperature**: measured when the gauge reports it, otherwise a monthly typical for tailwaters or freestones, always labeled “estimated.”
 - **Hatch outlook** (`src/lib/outlook.ts`): each hatch’s monthly intensity for that river, gated by water-temperature window and time of day, then adjusted by the forecast. Overcast boosts olives and midges, wind suppresses big mayflies, a warm breeze boosts hoppers.
-- **NWS User-Agent**: NWS asks every client to identify itself. Set `NWS_USER_AGENT` in Vercel (e.g. `Hatch (you@example.com)`) to include a contact.
+- **NWS User-Agent**: NWS asks every client to identify itself. Set `NWS_USER_AGENT` in Vercel (e.g. `Dead Drift (you@example.com)`) to include a contact.
 - **Sources for timing**: South Platte from [The Fly Fishing Place’s chart](https://theflyfishingplace.com/pages/south-platte-river-colorado-hatch-chart); Gunnison from [their Gunnison chart](https://theflyfishingplace.com/pages/gunnison-river-colorado-hatch-chart); Fryingpan, Arkansas, and others from shop reports. Treat it as a starting point.
 
 ## Structure
@@ -48,6 +48,7 @@ All sources are free and keyless. Every fetch is cached with `"use cache"` and f
 ```
 src/
   styles/tokens.css          primitives → semantic tokens; components use semantic only
+  lib/brand.ts               product name and URLs (rename the app here)
   lib/rivers.ts              Gold Medal reaches, gauges, per-river hatch timing
   lib/hatches.ts             hatch library
   lib/usgs.ts, weather.ts    data fetching (cached, never throw)
@@ -55,9 +56,9 @@ src/
   lib/outlook.ts             hourly hatch model
   lib/data.test.ts           unit tests for parsing and the model
   components/<Name>/         Name.tsx · Name.module.css · Name.stories.tsx
-  app/hatch/                 landing page + scroll-linked hero
+  app/dead-drift/            landing page
   app/rivers/                index + [slug] river pages
-  app/hatch/river/           interactive planner
+  app/plan/                  interactive planner
 ```
 
 ## Design decisions

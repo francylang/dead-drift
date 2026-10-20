@@ -4,7 +4,8 @@ import { useState } from "react";
 import { MonthRibbon } from "@/components/MonthRibbon/MonthRibbon";
 import { RiverScene } from "@/components/RiverScene/RiverScene";
 import { activityByMonth, MONTH_NAMES, seasonalHatches, type Hatch } from "@/lib/hatches";
-import styles from "./hatch.module.css";
+import styles from "./landing.module.css";
+import { BRAND } from "@/lib/brand";
 
 const list = new Intl.ListFormat("en-US", { style: "long", type: "conjunction" });
 
@@ -23,7 +24,7 @@ export function Hero({ hatches, currentMonth, where }: { hatches: Hatch[]; curre
       </div>
       <div className={styles.heroCopy}>
         <h1 id="hero-title" className={styles.heroTitle}>
-          Know what’s coming off the water before you rig up.
+          {BRAND.tagline}
         </h1>
         <div className={styles.heroMonth} aria-live="polite">
           <p className={styles.monthName}>

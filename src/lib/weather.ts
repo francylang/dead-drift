@@ -1,11 +1,12 @@
 import { cacheLife } from "next/cache";
+import { BRAND } from "./brand";
 
 /**
  * National Weather Service API. Free and keyless, but every request must send a
  * User-Agent that identifies the app. Set NWS_USER_AGENT to add a contact address.
  */
 const NWS = "https://api.weather.gov";
-const USER_AGENT = process.env.NWS_USER_AGENT ?? "Hatch fly-fishing demo (github.com/francylang/hatch)";
+const USER_AGENT = process.env.NWS_USER_AGENT ?? `${BRAND.name} fly-fishing demo (github.com/francylang)`;
 const HEADERS = { "User-Agent": USER_AGENT, Accept: "application/geo+json" };
 const TIMEOUT = 8_000;
 

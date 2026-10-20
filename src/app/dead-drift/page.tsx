@@ -9,17 +9,18 @@ import { formatClock, localParts } from "@/lib/time";
 import { allRiversToday, rankRivers } from "@/lib/today";
 import { Hero } from "./Hero";
 import { RiverHatchChart } from "./RiverHatchChart";
-import styles from "./hatch.module.css";
+import styles from "./landing.module.css";
+import { BRAND, ROUTES } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Hatch — know what’s coming off the water",
+  title: `${BRAND.name} — know what’s coming off the water`,
   description: "Live river gauges, the forecast, and the season, turned into what’s hatching and what to tie on.",
 };
 
 const SIGNALS = [
   {
     title: "Water temperature",
-    body: "Each insect hatches inside a temperature window. Hatch reads every river’s USGS gauge, or the season’s typical temperature when a gauge doesn’t report one.",
+    body: "Each insect hatches inside a temperature window. It reads every river’s gauge, or the season’s typical temperature when a gauge doesn’t report one.",
   },
   {
     title: "Time of year",
@@ -61,7 +62,7 @@ export default async function HatchPage() {
             {top.map(({ river, conditions: c, best }) => (
               <li key={river.slug} className={styles.pick}>
                 <div className={styles.pickRiver}>
-                  <Link href={`/rivers/${river.slug}`} className={styles.pickName}>
+                  <Link href={ROUTES.river(river.slug)} className={styles.pickName}>
                     {river.name}
                   </Link>
                   <span className={styles.pickReach}>{river.reach}</span>
@@ -78,7 +79,7 @@ export default async function HatchPage() {
           </ol>
           <p className={styles.source}>
             Live USGS gauges and the National Weather Service forecast, refreshed every 15 minutes. Snapshot{" "}
-            {formatClock(snapshot.takenAt)}. <Link href="/rivers">See all {RIVERS.length} Gold Medal rivers</Link>.
+            {formatClock(snapshot.takenAt)}. <Link href={ROUTES.rivers}>See all {RIVERS.length} Gold Medal rivers</Link>.
           </p>
         </section>
 
@@ -103,7 +104,7 @@ export default async function HatchPage() {
 
         <section className={styles.section} aria-labelledby="how-title">
           <h2 id="how-title" className={styles.sectionTitle}>
-            What Hatch reads
+            What {BRAND.name} reads
           </h2>
           <ul className={styles.signals}>
             {SIGNALS.map((s) => (
@@ -120,13 +121,13 @@ export default async function HatchPage() {
             Plan a day on the water
           </h2>
           <p>Set the month, the water temperature, and when you’ll get there. See what’s rising and what to tie on.</p>
-          <Button href="/hatch/river">Read the river</Button>
+          <Button href={ROUTES.plan}>Read the river</Button>
         </section>
       </main>
 
       <footer className={styles.footer}>
         <p>
-          Hatch is a portfolio project designed and built by <Link href="/">Francy Kessler</Link>. Hatch timing and hook
+          {BRAND.name} is a portfolio project designed and built by <Link href="/">Francy Kessler</Link>. Hatch timing and hook
           sizes are compiled from fly shop hatch charts and reports; treat them as a starting point and check with a
           local shop before you drive.
         </p>

@@ -5,9 +5,10 @@ import { getConditions } from "@/lib/conditions";
 import { plannerRiver } from "@/lib/planner";
 import { RIVERS } from "@/lib/rivers";
 import styles from "./river.module.css";
+import { pageTitle } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Read the river — Hatch",
+  title: pageTitle("Read the river"),
 };
 
 export default async function ReadTheRiverPage() {

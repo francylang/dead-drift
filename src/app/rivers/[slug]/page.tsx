@@ -14,6 +14,7 @@ import { gaugeAgency, gaugeUrl, RIVER_BY_SLUG, RIVERS, riverHatches } from "@/li
 import { formatClock, localParts } from "@/lib/time";
 import { getHourlyForecast } from "@/lib/weather";
 import styles from "./river.module.css";
+import { pageTitle, ROUTES } from "@/lib/brand";
 
 export function generateStaticParams() {
   return RIVERS.map((river) => ({ slug: river.slug }));
@@ -21,7 +22,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps<"/rivers/[slug]">): Promise<Metadata> {
   const river = RIVER_BY_SLUG[(await params).slug];
-  return river ? { title: `${river.name}, ${river.reach} — Hatch` } : {};
+  return river ? { title: pageTitle(`${river.name}, ${river.reach}`) } : {};
 }
 
 export default async function RiverPage({ params }: PageProps<"/rivers/[slug]">) {
@@ -54,7 +55,7 @@ export default async function RiverPage({ params }: PageProps<"/rivers/[slug]">)
             <RiverScene hatches={onTheWater} density={0.6} />
           </div>
           <div className={styles.headCopy}>
-            <Link href="/rivers" className={styles.back}>
+            <Link href={ROUTES.rivers} className={styles.back}>
               All Gold Medal rivers
             </Link>
             <h1 id="river-title" className={styles.title}>

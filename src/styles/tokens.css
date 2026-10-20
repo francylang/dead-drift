@@ -1,5 +1,5 @@
 /*
- * Hatch design tokens. Single source of truth for the app and Storybook.
+ * Design tokens. Single source of truth for the app and Storybook.
  * Primitives describe the material (a waterproof field notebook, a tailwater at dusk);
  * semantic tokens describe the job. Components only reference semantic tokens.
  */

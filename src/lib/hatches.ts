@@ -201,7 +201,7 @@ export const RIVER_HATCHES: Hatch[] = [
   },
 ];
 
-/** Every hatch Hatch knows about, by id. */
+/** Every hatch the app knows about, by id. */
 export const HATCH_LIBRARY: Record<string, Hatch> = Object.fromEntries(
   [...HATCHES, ...RIVER_HATCHES].map((h) => [h.id, h]),
 );

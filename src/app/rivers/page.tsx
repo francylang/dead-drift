@@ -6,9 +6,10 @@ import { flowValue, normalValue, TREND_MARK, waterValue } from "@/lib/describe";
 import { formatClock } from "@/lib/time";
 import { allRiversToday } from "@/lib/today";
 import styles from "./rivers.module.css";
+import { pageTitle, ROUTES } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Gold Medal rivers — Hatch",
+  title: pageTitle("Gold Medal rivers"),
   description: "Live flow, water temperature, and today’s best hatch on Colorado’s Gold Medal rivers.",
 };
 
@@ -44,7 +45,7 @@ export default async function RiversPage() {
             {rows.map(({ river, conditions: c, best }) => (
               <tr key={river.slug} data-band={c.band ?? undefined}>
                 <th scope="row" className={styles.river}>
-                  <Link href={`/rivers/${river.slug}`} className={styles.link}>
+                  <Link href={ROUTES.river(river.slug)} className={styles.link}>
                     {river.name}
                   </Link>
                   <span className={styles.reach}>{river.reach}</span>

@@ -83,7 +83,7 @@ export const Type: Story = {
       {TYPE.map((name) => (
         <Row key={name} name={name}>
           <span style={{ fontFamily: "var(--font-display)", fontSize: `var(${name})`, lineHeight: 1.1 }}>
-            Hatch
+            Dead drift
           </span>
         </Row>
       ))}

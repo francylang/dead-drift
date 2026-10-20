@@ -7,6 +7,13 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [{ source: "/storybook", destination: "/storybook/index.html" }];
   },
+  // The app was called Hatch; keep old links working.
+  async redirects() {
+    return [
+      { source: "/hatch", destination: "/dead-drift", permanent: true },
+      { source: "/hatch/river", destination: "/plan", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -3,20 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./SiteHeader.module.css";
+import { BRAND, ROUTES } from "@/lib/brand";
 
 const LINKS = [
-  { href: "/rivers", label: "Rivers" },
-  { href: "/hatch/river", label: "Read the river" },
+  { href: ROUTES.rivers, label: "Rivers" },
+  { href: ROUTES.plan, label: "Read the river" },
 ];
 
 export function SiteHeader() {
   const pathname = usePathname();
-  const current = (href: string) => pathname === href || (href === "/rivers" && pathname.startsWith("/rivers/"));
+  const current = (href: string) => pathname === href || (href === ROUTES.rivers && pathname.startsWith(`${ROUTES.rivers}/`));
 
   return (
     <header className={styles.bar}>
-      <Link href="/hatch" className={styles.wordmark}>
-        Hatch
+      <Link href={ROUTES.landing} className={styles.wordmark}>
+        {BRAND.name}
       </Link>
       <nav aria-label="Product">
         <ul className={styles.links}>

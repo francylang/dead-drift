@@ -4,7 +4,7 @@ import { useState } from "react";
 import { HatchChart } from "@/components/HatchChart/HatchChart";
 import { SelectField } from "@/components/SelectField/SelectField";
 import type { Hatch } from "@/lib/hatches";
-import styles from "./hatch.module.css";
+import styles from "./landing.module.css";
 
 export interface ChartRiver {
   slug: string;
