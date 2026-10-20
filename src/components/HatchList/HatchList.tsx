@@ -1,6 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
+import { AnimatePresence, motion } from "motion/react";
 import type { ActiveHatch, Intensity } from "@/lib/hatches";
 import { Insect } from "@/components/Insect/Insect";
 import styles from "./HatchList.module.css";
@@ -15,7 +16,7 @@ export interface HatchListProps {
 
 /** Field-book rows: what's hatching, how strongly, and what to tie on. */
 export function HatchList({ hatches, empty = "Nothing hatching. Fish nymphs deep and slow." }: HatchListProps) {
-  const reduce = useReducedMotion();
+  const reduce = usePrefersReducedMotion();
 
   if (hatches.length === 0) {
     return <p className={styles.empty}>{empty}</p>;

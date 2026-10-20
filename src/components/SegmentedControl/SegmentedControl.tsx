@@ -1,7 +1,8 @@
 "use client";
 
+import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 import { useId } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import styles from "./SegmentedControl.module.css";
 
 export interface SegmentedControlProps<T extends string> {
@@ -17,7 +18,7 @@ export interface SegmentedControlProps<T extends string> {
  */
 export function SegmentedControl<T extends string>({ label, options, value, onChange }: SegmentedControlProps<T>) {
   const name = useId();
-  const reduce = useReducedMotion();
+  const reduce = usePrefersReducedMotion();
 
   return (
     <fieldset className={styles.fieldset}>

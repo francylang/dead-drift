@@ -1,6 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
+import { AnimatePresence, motion } from "motion/react";
 import type { ActiveHatch, Order } from "@/lib/hatches";
 import { InsectShape } from "@/components/Insect/Insect";
 import styles from "./RiverScene.module.css";
@@ -32,7 +33,7 @@ export interface RiverSceneProps {
 }
 
 export function RiverScene({ hatches, density = 1, label }: RiverSceneProps) {
-  const reduce = useReducedMotion() ?? false;
+  const reduce = usePrefersReducedMotion();
 
   return (
     <svg

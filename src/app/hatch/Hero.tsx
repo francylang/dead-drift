@@ -1,7 +1,8 @@
 "use client";
 
+import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 import { useRef, useState } from "react";
-import { useMotionValueEvent, useReducedMotion, useScroll } from "motion/react";
+import { useMotionValueEvent, useScroll } from "motion/react";
 import { RiverScene } from "@/components/RiverScene/RiverScene";
 import { MONTH_NAMES, seasonalHatches } from "@/lib/hatches";
 import styles from "./hatch.module.css";
@@ -15,16 +16,17 @@ const list = new Intl.ListFormat("en-US", { style: "long", type: "conjunction" }
  */
 export function Hero({ startMonth }: { startMonth: number }) {
   const track = useRef<HTMLElement>(null);
-  const reduce = useReducedMotion();
-  const [month, setMonth] = useState(reduce ? startMonth : 0);
+  const reduce = usePrefersReducedMotion();
+  const [scrollMonth, setScrollMonth] = useState(0);
   const { scrollYProgress } = useScroll({ target: track, offset: ["start start", "end end"] });
 
   useMotionValueEvent(scrollYProgress, "change", (p) => {
-    if (reduce) return;
     const next = Math.min(11, Math.floor(p * 12));
-    if (next !== month) setMonth(next);
+    if (next !== scrollMonth) setScrollMonth(next);
   });
 
+  // With reduced motion the scene holds still on the current month instead of scrolling.
+  const month = reduce ? startMonth : scrollMonth;
   const hatches = seasonalHatches(month);
 
   return (
