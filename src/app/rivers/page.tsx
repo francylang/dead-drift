@@ -23,7 +23,7 @@ export default async function RiversPage() {
       <main className={styles.page}>
         <h1 className={styles.title}>Gold Medal rivers</h1>
         <p className={styles.intro}>
-          Colorado Parks and Wildlife’s Gold Medal waters with a USGS gauge. Flow and temperature refresh every 15
+          Colorado Parks and Wildlife’s Gold Medal waters with a live stream gauge. Flow and temperature refresh every 15
           minutes; the best bet uses today’s forecast.
         </p>
 
@@ -72,7 +72,7 @@ export default async function RiversPage() {
         </table>
 
         <p className={styles.source}>
-          Flow and temperature from USGS Water Services; forecast from the National Weather Service. Snapshot taken{" "}
+          Flow and temperature from USGS Water Services and Colorado DWR; forecast from the National Weather Service. Snapshot taken{" "}
           {formatClock(takenAt)}. “Est.” means the gauge doesn’t report temperature and the seasonal typical is shown.
         </p>
       </main>

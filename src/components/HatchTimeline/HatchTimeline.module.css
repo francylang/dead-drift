@@ -26,7 +26,7 @@
   position: sticky;
   left: 0;
   z-index: 1;
-  width: 11rem;
+  width: 13.5rem;
   background: var(--color-bg);
   text-align: left;
 }
@@ -44,6 +44,7 @@
   border-bottom: var(--rule-width) solid var(--color-rule);
   font: var(--text-md) / 1.15 var(--font-display);
   font-weight: 400;
+  white-space: nowrap;
 }
 
 .name > svg {
@@ -51,32 +52,31 @@
   margin-right: var(--space-2);
 }
 
+/* Bars rise from each row's baseline; height is how likely the hatch is that hour. */
 .cell {
   height: 2.75rem;
-  padding: 3px 1px;
+  padding: var(--space-2) 1px 0;
   border-bottom: var(--rule-width) solid var(--color-rule);
+  vertical-align: bottom;
 }
 
 .fill {
+  --bar-max: 2.25rem;
   display: block;
-  height: 100%;
-  border-radius: var(--radius-sm);
-  transform-origin: bottom;
+  border-radius: 2px 2px 0 0;
+  background: var(--color-hatch);
 }
 
-.fill[data-level="likely"],
-.swatch[data-level="likely"] {
-  background: var(--color-likely);
+.fill[data-level="slight"] {
+  height: calc(var(--bar-max) * var(--hatch-sparse));
 }
 
-.fill[data-level="possible"],
-.swatch[data-level="possible"] {
-  background: var(--color-possible);
+.fill[data-level="possible"] {
+  height: calc(var(--bar-max) * var(--hatch-good));
 }
 
-.fill[data-level="slight"],
-.swatch[data-level="slight"] {
-  background: var(--color-slight);
+.fill[data-level="likely"] {
+  height: calc(var(--bar-max) * var(--hatch-peak));
 }
 
 .hour[data-past],
@@ -98,31 +98,26 @@
   font-variant-numeric: tabular-nums;
 }
 
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-6);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-}
-
-.legend li {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.swatch {
-  width: 1rem;
-  height: 1rem;
-  border-radius: var(--radius-sm);
-}
-
 .empty {
   padding: var(--space-6) 0;
   border-top: 2px solid var(--color-text);
   color: var(--color-text-muted);
+}
+
+/* Phones: a narrower name column so more of the grid shows beside it. */
+@media (max-width: 40rem) {
+  .corner,
+  .name,
+  .weatherLabel {
+    width: 8.5rem;
+  }
+
+  .name {
+    white-space: normal;
+    font-size: var(--text-sm);
+  }
+
+  .name > svg {
+    display: none;
+  }
 }

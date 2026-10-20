@@ -1,10 +1,15 @@
+.chartWrap {
+  display: grid;
+  gap: var(--space-4);
+}
+
 .scroller {
   overflow-x: auto;
 }
 
 .chart {
   width: 100%;
-  min-width: 44rem;
+  min-width: 46rem;
   border-collapse: collapse;
   table-layout: fixed;
   border-top: 2px solid var(--color-text);
@@ -15,7 +20,7 @@
   position: sticky;
   left: 0;
   z-index: 1;
-  width: 12rem;
+  width: 13.5rem;
   background: var(--color-bg);
   text-align: left;
 }
@@ -47,6 +52,7 @@
   padding: var(--space-2) var(--space-3) var(--space-2) 0;
   border-bottom: var(--rule-width) solid var(--color-rule);
   font: var(--text-md) / 1.15 var(--font-display);
+  white-space: nowrap;
 }
 
 .name > svg {
@@ -54,14 +60,34 @@
   margin-right: var(--space-2);
 }
 
+/* Bars sit on the row's baseline and butt together, so a hatch's season reads as one profile. */
 .cell {
   position: relative;
-  height: 2.5rem;
-  padding: 0.6rem 0;
+  height: 2.75rem;
+  padding: var(--space-2) 0 0;
   border-bottom: var(--rule-width) solid var(--color-rule);
+  vertical-align: bottom;
 }
 
-/* A rule down this month's column, drawn over the bars. */
+.fill {
+  --bar-max: 2.25rem;
+  display: block;
+  background: var(--color-hatch);
+}
+
+.fill[data-intensity="1"] {
+  height: calc(var(--bar-max) * var(--hatch-sparse));
+}
+
+.fill[data-intensity="2"] {
+  height: calc(var(--bar-max) * var(--hatch-good));
+}
+
+.fill[data-intensity="3"] {
+  height: calc(var(--bar-max) * var(--hatch-peak));
+}
+
+/* A rule down this month's column, over the bars. */
 .cell[data-current]::after {
   content: "";
   position: absolute;
@@ -71,25 +97,11 @@
   background: var(--color-text);
 }
 
-/* Cells butt together so a run of months reads as one continuous bar. */
-.fill {
-  position: relative;
-  display: block;
-  height: 100%;
-  transform-origin: left;
-}
-
-/* Same scale as the hourly outlook: peak, good, around. Color, not opacity, so the reveal can own opacity. */
-.fill[data-intensity="3"] {
-  background: var(--color-likely);
-}
-
-.fill[data-intensity="2"] {
-  background: var(--color-possible);
-}
-
-.fill[data-intensity="1"] {
-  background: var(--color-slight);
+.nowSwatch {
+  display: inline-block;
+  width: 2px;
+  height: 1.125rem;
+  background: var(--color-text);
 }
 
 .hookSize {
@@ -100,4 +112,21 @@
   text-align: right;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+/* Phones: a narrower name column so more of the grid shows beside it. */
+@media (max-width: 40rem) {
+  .corner,
+  .name {
+    width: 8.5rem;
+  }
+
+  .name {
+    white-space: normal;
+    font-size: var(--text-sm);
+  }
+
+  .name > svg {
+    display: none;
+  }
 }

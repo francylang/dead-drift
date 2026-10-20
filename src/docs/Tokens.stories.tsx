@@ -21,9 +21,7 @@ const COLORS = [
   "--color-midge",
   "--color-terrestrial",
   "--color-crustacean",
-  "--color-likely",
-  "--color-possible",
-  "--color-slight",
+  "--color-hatch",
 ];
 const TYPE = ["--text-4xl", "--text-3xl", "--text-2xl", "--text-xl", "--text-lg", "--text-md", "--text-sm"];
 const SPACE = ["--space-1", "--space-2", "--space-3", "--space-4", "--space-6", "--space-8", "--space-12", "--space-16", "--space-24"];

@@ -6,7 +6,7 @@ import type { ActiveHatch, Intensity } from "@/lib/hatches";
 import { Insect } from "@/components/Insect/Insect";
 import styles from "./HatchList.module.css";
 
-const STRENGTH: Record<Exclude<Intensity, 0>, string> = { 1: "Around", 2: "Good", 3: "Peak" };
+const STRENGTH: Record<Exclude<Intensity, 0>, string> = { 1: "Sparse", 2: "Good", 3: "Peak" };
 
 export interface HatchListProps {
   hatches: ActiveHatch[];

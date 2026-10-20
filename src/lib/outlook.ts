@@ -56,6 +56,35 @@ function diurnalOffset(hour: number, kind: RiverKind) {
   return 1;
 }
 
+/** Hour each hatch is usually heaviest, local time. */
+const PEAK_HOUR: Record<string, number> = {
+  trico: 8,
+  pmd: 10,
+  midge: 13,
+  bwo: 14,
+  mahogany: 14,
+  hopper: 14,
+  "golden-stone": 15,
+  salmonfly: 15,
+  "green-drake": 15,
+  "mothers-day-caddis": 16,
+  "yellow-sally": 17,
+  caddis: 18,
+};
+
+export function peakHourOf(hatch: Hatch): number {
+  if (PEAK_HOUR[hatch.id] !== undefined) return PEAK_HOUR[hatch.id];
+  if (hatch.times.length === 1 && hatch.times[0] === "morning") return 9;
+  if (hatch.times.includes("evening") && !hatch.times.includes("morning")) return 17;
+  return 14;
+}
+
+/** Hatches build to a peak and taper off: 10% per hour from the peak, never below 40%. */
+function dayShape(hatch: Hatch, hour: number) {
+  if (hatch.order === "crustacean") return 1;
+  return Math.max(0.4, 1 - Math.abs(hour - peakHourOf(hatch)) * 0.1);
+}
+
 export function levelOf(score: number): Level | null {
   if (score >= 0.66) return "likely";
   if (score >= 0.33) return "possible";
@@ -79,9 +108,7 @@ export function scoreHour(hatch: Hatch, hour: number, inputs: OutlookInputs, wea
   if (hatch.waterF && (water < hatch.waterF[0] - 2 || water > hatch.waterF[1] + 2)) return empty;
 
   // Mysis aren't a hatch: steady food below the dam, never the headline.
-  let score = (intensity / 3) * (hatch.order === "crustacean" ? 0.75 : 1);
-  // Midges trickle off all day but the real hatch is midday.
-  if (hatch.order === "midge" && timeOfDay(hour) !== "afternoon") score *= 0.7;
+  let score = (intensity / 3) * (hatch.order === "crustacean" ? 0.75 : 1) * dayShape(hatch, hour);
   let reason: string | undefined;
 
   if (weather) {
@@ -104,7 +131,7 @@ export function scoreHour(hatch: Hatch, hour: number, inputs: OutlookInputs, wea
     if (hatch.order !== "crustacean" && weather.precipPct > 70 && hatch.id !== "bwo") score *= 0.8;
   }
 
-  score = Math.min(1, score);
+  // Not capped at 1: a gray afternoon that pushes olives past "peak" should still rank above a sunny one.
   return { hour, score, level: levelOf(score), reason };
 }
 
@@ -144,14 +171,19 @@ export function buildOutlook(inputs: OutlookInputs, now: string): DayOutlook[] {
   });
 }
 
-/** Contiguous hours at or above "possible", for one-line summaries: "1p–4p". */
+/**
+ * The hatch's best stretch of the day: contiguous hours around the peak scoring at least
+ * 85% of it (and at least "possible"). Weather shifts and narrows it; e.g. "1p–4p".
+ */
 export function windowOf(outlook: HatchOutlook): [number, number] | null {
-  const good = outlook.cells.filter((c) => c.score >= 0.33).map((c) => c.hour);
-  if (good.length === 0) return null;
-  const peak = outlook.peak!.hour;
-  let start = peak;
-  let end = peak;
-  while (good.includes(start - 1)) start--;
-  while (good.includes(end + 1)) end++;
-  return good.includes(peak) ? [start, end] : null;
+  const peak = outlook.peak;
+  if (!peak) return null;
+  const floor = Math.max(0.33, peak.score * 0.85);
+  const good = new Set(outlook.cells.filter((c) => c.score >= floor).map((c) => c.hour));
+  if (!good.has(peak.hour)) return null;
+  let start = peak.hour;
+  let end = peak.hour;
+  while (good.has(start - 1)) start--;
+  while (good.has(end + 1)) end++;
+  return [start, end];
 }

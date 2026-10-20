@@ -1,0 +1,43 @@
+.key {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.well {
+  display: flex;
+  align-items: flex-end;
+  width: 0.875rem;
+  height: 1.125rem;
+  border-bottom: var(--rule-width) solid var(--color-rule);
+}
+
+.bar {
+  width: 100%;
+  background: var(--color-hatch);
+}
+
+/* Same steps as the chart bars. */
+.bar[data-strength="1"] {
+  height: calc(100% * var(--hatch-sparse));
+}
+
+.bar[data-strength="2"] {
+  height: calc(100% * var(--hatch-good));
+}
+
+.bar[data-strength="3"] {
+  height: calc(100% * var(--hatch-peak));
+}

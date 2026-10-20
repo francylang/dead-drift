@@ -117,8 +117,15 @@ describe("outlook", () => {
     expect(today.label).toBe("Today");
     expect(tomorrow.label).toBe("Tomorrow");
     const olives = today.hatches.find((h) => h.hatch.id === "bwo")!;
-    expect(windowOf(olives)).toEqual([11, 16]);
+    expect(windowOf(olives)).toEqual([13, 15]);
     expect(today.weather).toHaveLength(15);
+  });
+
+  test("clouds arriving late push the olive window later", () => {
+    const weather = Array.from({ length: 15 }, (_, i) => hour(6 + i, { sky: 6 + i >= 15 ? 0.85 : 0.45 }));
+    const [today] = buildOutlook({ ...base, weather }, "2026-10-20T08:00:00-06:00");
+    const olives = today.hatches.find((h) => h.hatch.id === "bwo")!;
+    expect(windowOf(olives)).toEqual([14, 16]);
   });
 });
 
@@ -128,5 +135,13 @@ describe("ranking", () => {
     const r = (slug: string, score: number) => ({ river: RIVER_BY_SLUG[slug], score }) as never;
     const ranked = rankRivers([r("blue", 0.4), r("fryingpan", 0.9), r("taylor", 0.4)]);
     expect(ranked.map((x: { river: { slug: string } }) => x.river.slug)).toEqual(["fryingpan", "blue", "taylor"]);
+  });
+});
+
+describe("Colorado DWR timestamps", () => {
+  test("attach MDT in summer and MST in winter", async () => {
+    const { withDenverOffset } = await import("./dwr");
+    expect(withDenverOffset("2026-10-20T13:15:00")).toBe("2026-10-20T13:15:00-06:00");
+    expect(withDenverOffset("2026-12-20T13:15:00")).toBe("2026-12-20T13:15:00-07:00");
   });
 });

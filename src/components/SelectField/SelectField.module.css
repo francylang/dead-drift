@@ -23,6 +23,7 @@
   background: var(--color-surface);
   color: var(--color-text);
   font: var(--text-lg) / 1.2 var(--font-display);
+  text-overflow: ellipsis;
   cursor: pointer;
 }
 

@@ -18,7 +18,7 @@ export const MONTH_NAMES = [
 export type Order = "mayfly" | "caddis" | "stonefly" | "midge" | "terrestrial" | "crustacean";
 export type TimeOfDay = "morning" | "afternoon" | "evening";
 
-/** 0 = absent, 1 = around, 2 = good, 3 = peak */
+/** 0 = absent, 1 = sparse, 2 = good, 3 = peak */
 export type Intensity = 0 | 1 | 2 | 3;
 
 export interface Hatch {

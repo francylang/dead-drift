@@ -12,14 +12,6 @@ const meta = {
     currentMonth: 9,
     caption: "South Platte hatch chart",
   },
-  decorators: [
-    // Room above and below so the scroll-linked reveal can be scrubbed in the canvas.
-    (Story) => (
-      <div style={{ padding: "60vh 0" }}>
-        <Story />
-      </div>
-    ),
-  ],
 } satisfies Meta<typeof HatchChart>;
 
 export default meta;

@@ -10,7 +10,7 @@ import { getConditions } from "@/lib/conditions";
 import { flowDetail, flowValue, normalDetail, normalValue, waterDetail, waterValue } from "@/lib/describe";
 import { buildOutlook } from "@/lib/outlook";
 import { plannerRiver } from "@/lib/planner";
-import { RIVER_BY_SLUG, RIVERS, riverHatches } from "@/lib/rivers";
+import { gaugeAgency, gaugeUrl, RIVER_BY_SLUG, RIVERS, riverHatches } from "@/lib/rivers";
 import { formatClock, localParts } from "@/lib/time";
 import { getHourlyForecast } from "@/lib/weather";
 import styles from "./river.module.css";
@@ -106,11 +106,13 @@ export default async function RiverPage({ params }: PageProps<"/rivers/[slug]">)
           </section>
 
           <p className={styles.source}>
-            Flow from USGS gauge{" "}
-            <a href={`https://waterdata.usgs.gov/monitoring-location/USGS-${river.gauge.id}/`}>
+            Flow from {gaugeAgency(river)} gauge{" "}
+            <a href={gaugeUrl(river)}>
               {river.gauge.id}, {river.gauge.name}
             </a>
-            {c.readAt && `, read ${formatClock(c.readAt)}`}. Forecast from the National Weather Service. Hatch timing
+            {c.readAt && `, read ${formatClock(c.readAt)}`}.
+            {river.gauge.source === "dwr" && river.gauge.statsId && ` Normal flows from USGS ${river.gauge.statsId}.`}{" "}
+            Forecast from the National Weather Service. Hatch timing
             is a starting point from regional charts; check with a local shop before you drive.
           </p>
         </div>

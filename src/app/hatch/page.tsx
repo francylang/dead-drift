@@ -87,7 +87,7 @@ export default async function HatchPage() {
             A year on the water
           </h2>
           <p className={styles.chartIntro}>
-            The hatch chart every fly shop pins by the register. Darker means heavier; the line marks this month.
+            The hatch chart every fly shop pins by the register, month by month. Taller bars mean a heavier hatch.
           </p>
           <RiverHatchChart
             rivers={RIVERS.map((r) => ({
@@ -126,12 +126,9 @@ export default async function HatchPage() {
 
       <footer className={styles.footer}>
         <p>
-          Hatch is a portfolio project designed and built by <Link href="/">Francy Kessler</Link>. South Platte hatch
-          timing and hook sizes follow{" "}
-          <a href="https://theflyfishingplace.com/pages/south-platte-river-colorado-hatch-chart">
-            The Fly Fishing Place’s chart
-          </a>
-          ; other rivers draw on regional charts and shop reports. Temperature windows are approximate.
+          Hatch is a portfolio project designed and built by <Link href="/">Francy Kessler</Link>. Hatch timing and hook
+          sizes are compiled from fly shop hatch charts and reports; treat them as a starting point and check with a
+          local shop before you drive.
         </p>
       </footer>
     </>

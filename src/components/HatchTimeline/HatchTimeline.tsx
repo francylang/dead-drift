@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 import { Insect } from "@/components/Insect/Insect";
 import { SegmentedControl } from "@/components/SegmentedControl/SegmentedControl";
-import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
+import { StrengthKey } from "@/components/StrengthKey/StrengthKey";
 import { FIRST_HOUR, LAST_HOUR, type DayOutlook, type Level } from "@/lib/outlook";
 import { shortHour } from "@/lib/time";
 import styles from "./HatchTimeline.module.css";
@@ -20,12 +19,21 @@ export interface HatchTimelineProps {
 
 /**
  * Hour-by-hour hatch outlook as a real table: hatches are rows, hours are columns,
- * fill shows how likely each hatch is. Screen readers get the level as text in every cell.
+ * bar height shows how likely each hatch is. Screen readers get the level as text in every cell.
  */
 export function HatchTimeline({ days, currentHour }: HatchTimelineProps) {
   const [dayKey, setDayKey] = useState(days[0]?.dateKey);
-  const reduce = usePrefersReducedMotion();
+  const scroller = useRef<HTMLDivElement>(null);
   const index = Math.max(0, days.findIndex((d) => d.dateKey === dayKey));
+
+  // On narrow screens the grid scrolls sideways; open today's view at the current hour, not 6 a.m.
+  useEffect(() => {
+    const el = scroller.current;
+    if (!el || index !== 0 || currentHour === undefined || el.scrollWidth <= el.clientWidth) return;
+    const col = el.querySelector<HTMLElement>(`[data-hour="${Math.max(FIRST_HOUR, currentHour - 1)}"]`);
+    const sticky = el.querySelector<HTMLElement>("th[scope='col']");
+    if (col && sticky) el.scrollLeft = col.offsetLeft - sticky.offsetWidth;
+  }, [index, currentHour]);
   const day = days[index];
   if (!day) return null;
 
@@ -45,7 +53,7 @@ export function HatchTimeline({ days, currentHour }: HatchTimelineProps) {
           No hatches expected {day.label.toLowerCase()}. Fish nymphs and midge larvae deep and slow.
         </p>
       ) : (
-        <div className={styles.scroller}>
+        <div ref={scroller} className={styles.scroller}>
           <table className={styles.grid}>
             <caption className="visually-hidden">
               Hourly hatch outlook, {day.label.toLowerCase()}. Each cell gives how likely the hatch is that hour.
@@ -56,31 +64,22 @@ export function HatchTimeline({ days, currentHour }: HatchTimelineProps) {
                   <span className="visually-hidden">Hatch</span>
                 </th>
                 {HOURS.map((h) => (
-                  <th key={h} scope="col" className={styles.hour} data-past={isPast(h) || undefined}>
+                  <th key={h} scope="col" className={styles.hour} data-hour={h} data-past={isPast(h) || undefined}>
                     {shortHour(h)}
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {day.hatches.map(({ hatch, cells }, row) => (
+              {day.hatches.map(({ hatch, cells }) => (
                 <tr key={hatch.id}>
                   <th scope="row" className={styles.name}>
                     <Insect order={hatch.order} size={28} color="var(--color-action)" />
                     <span>{hatch.name}</span>
                   </th>
-                  {cells.map((cell, col) => (
+                  {cells.map((cell) => (
                     <td key={cell.hour} className={styles.cell} data-past={isPast(cell.hour) || undefined}>
-                      {cell.level && (
-                        <motion.span
-                          key={day.dateKey}
-                          className={styles.fill}
-                          data-level={cell.level}
-                          initial={reduce ? false : { opacity: 0, scaleY: 0.3 }}
-                          animate={{ opacity: 1, scaleY: 1 }}
-                          transition={{ delay: reduce ? 0 : col * 0.018 + row * 0.03, duration: 0.25 }}
-                        />
-                      )}
+                      {cell.level && <span className={styles.fill} data-level={cell.level} />}
                       <span className="visually-hidden">
                         {cell.level ? LEVEL_TEXT[cell.level] : "None"}
                         {cell.reason ? `, ${cell.reason}` : ""}
@@ -124,15 +123,13 @@ export function HatchTimeline({ days, currentHour }: HatchTimelineProps) {
         </div>
       )}
 
-      <ul className={styles.legend} aria-label="Key">
-        {(["likely", "possible", "slight"] as Level[]).map((level) => (
-          <li key={level}>
-            <span className={styles.swatch} data-level={level} aria-hidden="true" />
-            {LEVEL_TEXT[level]}
-          </li>
-        ))}
-        {day.weather.length > 0 && <li>Wind in mph</li>}
-      </ul>
+      <StrengthKey
+        labels={["Slight", "Possible", "Likely"]}
+        extras={[
+          ...(index === 0 && currentHour !== undefined && currentHour > FIRST_HOUR ? ["Faded hours have passed"] : []),
+          ...(day.weather.length > 0 ? ["Air in °F, wind in mph"] : []),
+        ]}
+      />
     </div>
   );
 }

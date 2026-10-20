@@ -52,10 +52,11 @@
   --color-terrestrial: var(--grass);
   --color-crustacean: var(--mysis);
 
-  /* Semantic — outlook */
-  --color-likely: var(--river-700);
-  --color-possible: var(--river-300);
-  --color-slight: var(--paper-400);
+  /* Semantic — hatch strength. One ink; bar height carries the strength. */
+  --color-hatch: var(--river-700);
+  --hatch-sparse: 0.3;
+  --hatch-good: 0.62;
+  --hatch-peak: 1;
 
   /* Type — families */
   --font-display: "Young Serif", Georgia, serif;

@@ -2,7 +2,8 @@ import { cacheLife } from "next/cache";
 import { TYPICAL_WATER_F } from "./hatches";
 import { RIVERS } from "./rivers";
 import { localParts } from "./time";
-import { getFlowNormals, getGauges, type FlowNormal } from "./usgs";
+import { getDwrFlow } from "./dwr";
+import { getFlowNormals, getGauges, type FlowNormal, type Reading } from "./usgs";
 
 export type Trend = "rising" | "falling" | "steady";
 export type FlowBand = "low" | "normal" | "high";
@@ -28,7 +29,11 @@ export interface ConditionsSnapshot {
   rivers: Record<string, RiverConditions>;
 }
 
-const SITE_IDS = RIVERS.map((r) => r.gauge.id);
+const USGS_IDS = RIVERS.flatMap((r) => (r.gauge.source === "usgs" ? [r.gauge.id] : []));
+const STATS_IDS = RIVERS.flatMap((r) =>
+  r.gauge.source === "usgs" ? [r.gauge.id] : r.gauge.statsId ? [r.gauge.statsId] : [],
+);
+const DWR_IDS = RIVERS.flatMap((r) => (r.gauge.source === "dwr" ? [r.gauge.id] : []));
 
 /**
  * Current conditions for every river in one cached snapshot: one USGS IV request,
@@ -39,17 +44,24 @@ export async function getConditions(): Promise<ConditionsSnapshot> {
   cacheLife({ stale: 300, revalidate: 900, expire: 86_400 });
 
   const takenAt = new Date().toISOString();
-  const [gauges, normals] = await Promise.all([getGauges(SITE_IDS), getFlowNormals(SITE_IDS)]);
+  const [gauges, normals, dwrFlows] = await Promise.all([
+    getGauges(USGS_IDS),
+    getFlowNormals(STATS_IDS),
+    Promise.all(DWR_IDS.map(getDwrFlow)),
+  ]);
+  const dwr: Record<string, Reading[]> = Object.fromEntries(DWR_IDS.map((id, i) => [id, dwrFlows[i]]));
   const today = localParts(takenAt);
   const dayKey = `${today.month + 1}-${today.day}`;
 
   const rivers = Object.fromEntries(
     RIVERS.map((river) => {
-      const gauge = gauges[river.gauge.id];
-      const flow = gauge?.flow ?? [];
+      const g = river.gauge;
+      const gauge = g.source === "usgs" ? gauges[g.id] : undefined;
+      const flow = g.source === "usgs" ? (gauge?.flow ?? []) : (dwr[g.id] ?? []);
       const latest = flow.at(-1) ?? null;
       const tempC = gauge?.tempC.at(-1) ?? null;
-      const normal = normals[river.gauge.id]?.[dayKey] ?? null;
+      const statsId = g.source === "usgs" ? g.id : g.statsId;
+      const normal = (statsId && normals[statsId]?.[dayKey]) || null;
       const pctOfMedian = latest && normal?.p50 ? Math.round((latest.value / normal.p50) * 100) : null;
 
       const conditions: RiverConditions = {

@@ -11,8 +11,14 @@ export interface River {
   reach: string;
   region: string;
   kind: RiverKind;
-  /** USGS site number for the gauge used for flow (and temperature, where reported). */
-  gauge: { id: string; name: string };
+  /**
+   * Where live flow comes from. USGS sites also give water temperature where reported.
+   * DWR stations fill gaps where USGS only runs a gauge in season; `statsId` names the
+   * USGS site whose long-term record supplies "compared with normal".
+   */
+  gauge:
+    | { source: "usgs"; id: string; name: string }
+    | { source: "dwr"; id: string; name: string; statsId?: string };
   /** Fallback coordinates for the weather forecast when the gauge can't be reached. */
   coords: [lat: number, lon: number];
   /** Hatch ids from the library, with optional per-river monthly timing. */
@@ -34,7 +40,7 @@ export const RIVERS: River[] = [
     reach: "Cheesman Canyon to Deckers",
     region: "Front Range",
     kind: "tailwater",
-    gauge: { id: "06701900", name: "South Platte below Brush Creek near Trumbull" },
+    gauge: { source: "usgs", id: "06701900", name: "South Platte below Brush Creek near Trumbull" },
     coords: [39.26, -105.222],
     hatches: ["midge", "bwo", "caddis", "pmd", "golden-stone", "yellow-sally", "trico", "mahogany", "hopper"],
   },
@@ -44,8 +50,9 @@ export const RIVERS: River[] = [
     reach: "Lake Fork to Parkdale",
     region: "Upper Arkansas",
     kind: "freestone",
-    gauge: { id: "07091200", name: "Arkansas River near Nathrop" },
-    coords: [38.745, -106.077],
+    // USGS Nathrop and Parkdale are seasonal; DWR's Salida station reports year-round.
+    gauge: { source: "dwr", id: "ARKSALCO", name: "Arkansas River at Salida", statsId: "07091500" },
+    coords: [38.54, -105.99],
     hatches: ["midge", "bwo", "mothers-day-caddis", "caddis", "pmd", "golden-stone", "yellow-sally", "hopper"],
   },
   {
@@ -54,7 +61,7 @@ export const RIVERS: River[] = [
     reach: "Ruedi Dam to the Roaring Fork",
     region: "Roaring Fork Valley",
     kind: "tailwater",
-    gauge: { id: "09080400", name: "Fryingpan River near Ruedi" },
+    gauge: { source: "usgs", id: "09080400", name: "Fryingpan River near Ruedi" },
     coords: [39.365, -106.823],
     hatches: [
       "midge",
@@ -74,7 +81,7 @@ export const RIVERS: River[] = [
     reach: "Basalt to Glenwood Springs",
     region: "Roaring Fork Valley",
     kind: "freestone",
-    gauge: { id: "09085000", name: "Roaring Fork River at Glenwood Springs" },
+    gauge: { source: "usgs", id: "09085000", name: "Roaring Fork River at Glenwood Springs" },
     coords: [39.544, -107.329],
     hatches: [
       "midge",
@@ -93,7 +100,7 @@ export const RIVERS: River[] = [
     reach: "Dillon Dam through Silverthorne",
     region: "Summit County",
     kind: "tailwater",
-    gauge: { id: "09050700", name: "Blue River below Dillon" },
+    gauge: { source: "usgs", id: "09050700", name: "Blue River below Dillon" },
     coords: [39.626, -106.066],
     hatches: ["midge", "mysis", "bwo", "pmd", "caddis"],
   },
@@ -103,7 +110,7 @@ export const RIVERS: River[] = [
     reach: "Windy Gap to Kremmling",
     region: "Middle Park",
     kind: "freestone",
-    gauge: { id: "09058000", name: "Colorado River near Kremmling" },
+    gauge: { source: "usgs", id: "09058000", name: "Colorado River near Kremmling" },
     coords: [40.037, -106.44],
     hatches: [
       "midge",
@@ -123,7 +130,7 @@ export const RIVERS: River[] = [
     reach: "Black Canyon and Gunnison Gorge",
     region: "Gunnison Basin",
     kind: "tailwater",
-    gauge: { id: "09128000", name: "Gunnison River below Gunnison Tunnel" },
+    gauge: { source: "usgs", id: "09128000", name: "Gunnison River below Gunnison Tunnel" },
     coords: [38.529, -107.649],
     hatches: [
       "midge",
@@ -143,7 +150,7 @@ export const RIVERS: River[] = [
     reach: "Almont to Twin Bridges",
     region: "Gunnison Basin",
     kind: "freestone",
-    gauge: { id: "09114500", name: "Gunnison River near Gunnison" },
+    gauge: { source: "usgs", id: "09114500", name: "Gunnison River near Gunnison" },
     coords: [38.542, -106.949],
     hatches: [
       "midge",
@@ -160,7 +167,7 @@ export const RIVERS: River[] = [
     reach: "Below Taylor Park Reservoir",
     region: "Gunnison Basin",
     kind: "tailwater",
-    gauge: { id: "09109000", name: "Taylor River below Taylor Park Reservoir" },
+    gauge: { source: "usgs", id: "09109000", name: "Taylor River below Taylor Park Reservoir" },
     coords: [38.818, -106.609],
     hatches: ["midge", "mysis", "bwo", "pmd", "caddis"],
   },
@@ -170,7 +177,7 @@ export const RIVERS: River[] = [
     reach: "South Fork to Del Norte",
     region: "San Luis Valley",
     kind: "freestone",
-    gauge: { id: "08220000", name: "Rio Grande near Del Norte" },
+    gauge: { source: "usgs", id: "08220000", name: "Rio Grande near Del Norte" },
     coords: [37.69, -106.46],
     hatches: [
       "midge",
@@ -188,7 +195,7 @@ export const RIVERS: River[] = [
     reach: "Through Durango",
     region: "Southwest",
     kind: "freestone",
-    gauge: { id: "09361500", name: "Animas River at Durango" },
+    gauge: { source: "usgs", id: "09361500", name: "Animas River at Durango" },
     coords: [37.279, -107.88],
     hatches: ["midge", "bwo", "caddis", "golden-stone", "pmd", "hopper"],
   },
@@ -198,7 +205,7 @@ export const RIVERS: River[] = [
     reach: "Northgate Canyon to Wyoming",
     region: "North Park",
     kind: "freestone",
-    gauge: { id: "06620000", name: "North Platte River near Northgate" },
+    gauge: { source: "usgs", id: "06620000", name: "North Platte River near Northgate" },
     coords: [40.937, -106.338],
     hatches: ["midge", "bwo", "caddis", "golden-stone", "pmd", "yellow-sally", "hopper"],
   },
@@ -208,7 +215,7 @@ export const RIVERS: River[] = [
     reach: "Red Sandstone Creek to the Eagle",
     region: "Vail Valley",
     kind: "freestone",
-    gauge: { id: "09066325", name: "Gore Creek above Red Sandstone Creek at Vail" },
+    gauge: { source: "usgs", id: "09066325", name: "Gore Creek above Red Sandstone Creek at Vail" },
     coords: [39.64, -106.385],
     hatches: ["midge", "bwo", "caddis", "pmd", "golden-stone", "yellow-sally"],
   },
@@ -241,3 +248,12 @@ export function statewideHatches(): Hatch[] {
   }
   return [...byId.values()];
 }
+
+/** Public page for a river's gauge. */
+export function gaugeUrl(river: River): string {
+  return river.gauge.source === "usgs"
+    ? `https://waterdata.usgs.gov/monitoring-location/USGS-${river.gauge.id}/`
+    : `https://dwr.state.co.us/Tools/Stations/${river.gauge.id}`;
+}
+
+export const gaugeAgency = (river: River) => (river.gauge.source === "usgs" ? "USGS" : "Colorado DWR");
