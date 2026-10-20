@@ -4,19 +4,19 @@ import styles from "./home.module.css";
 // Placeholder copy — rewrite in your own voice.
 const WORK = [
   {
-    href: "/swath",
-    title: "Swath landing page",
-    body: "Marketing page for an invented farm cash-flow product. Scroll-driven hero chart, responsive layout, reduced-motion fallback.",
+    href: "/hatch",
+    title: "Hatch landing page",
+    body: "Marketing page for an invented fly-fishing app. Scroll moves a pinned river through the year; live flow from a USGS gauge.",
   },
   {
     href: "/storybook",
-    title: "Swath component library",
-    body: "Storybook with design tokens, accessible form controls, and interaction tests on every component.",
+    title: "Hatch component library",
+    body: "Storybook with design tokens, insect glyphs, accessible form controls, and interaction tests on every component.",
   },
   {
-    href: "/swath/plan",
-    title: "Season planner",
-    body: "Interactive what-if: move harvest timing and yield, watch month-end cash spring to new values.",
+    href: "/hatch/river",
+    title: "Read the river",
+    body: "Set month, water temperature, and time of day; insects rise off an animated river and the fly list updates.",
   },
 ];
 

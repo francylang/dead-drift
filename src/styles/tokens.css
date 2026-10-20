@@ -1,49 +1,68 @@
 /*
- * Swath design tokens. Single source of truth for the app and Storybook.
- * Primitives describe the material; semantic tokens describe the job.
- * Components only reference semantic tokens.
+ * Hatch design tokens. Single source of truth for the app and Storybook.
+ * Primitives describe the material (a waterproof field notebook, a tailwater at dusk);
+ * semantic tokens describe the job. Components only reference semantic tokens.
  */
 
 :root {
-  /* Primitives — color */
-  --ledger-50: #f3f7f0;
-  --ledger-100: #e6eee1; /* ledger paper */
-  --ledger-300: #b7cdb0; /* ledger rule */
-  --spruce-700: #2f4a3c;
-  --spruce-900: #1d2e25; /* ink */
-  --canola-400: #f2c94c;
-  --canola-600: #c99a06; /* income */
-  --soil-500: #8a5a3c;
-  --soil-700: #6b4129; /* spend */
-  --frost: #ffffff;
+  /* Primitives — field book */
+  --paper-100: #f6efcf;
+  --paper-200: #efe5b5; /* waterproof field-book yellow */
+  --paper-400: #cdbf85; /* printed rule */
+  --graphite-700: #44505c;
+  --graphite-900: #1e2833; /* pencil */
 
-  /* Semantic — color */
-  --color-bg: var(--ledger-100);
-  --color-surface: var(--ledger-50);
-  --color-text: var(--spruce-900);
-  --color-text-muted: var(--spruce-700);
-  --color-rule: var(--ledger-300);
-  --color-income: var(--canola-600);
-  --color-income-fill: var(--canola-400);
-  --color-spend: var(--soil-700);
-  --color-spend-fill: var(--soil-500);
-  --color-action: var(--spruce-900);
-  --color-action-text: var(--ledger-50);
-  --color-focus: var(--canola-600);
+  /* Primitives — river */
+  --river-900: #163238;
+  --river-700: #1f454c;
+  --river-500: #2f6366;
+  --river-300: #7fa8a3;
+
+  /* Primitives — insects, seen against water */
+  --sulphur: #f4e9b8;
+  --spinner: #b9d6ee;
+  --tan: #d9c08a;
+  --golden: #e2b04a;
+  --grass: #a6b85a;
+
+  /* Semantic — page */
+  --color-bg: var(--paper-200);
+  --color-surface: var(--paper-100);
+  --color-text: var(--graphite-900);
+  --color-text-muted: var(--graphite-700);
+  --color-rule: var(--paper-400);
+  --color-action: var(--river-700);
+  --color-action-hover: var(--river-500);
+  --color-action-text: var(--paper-100);
+  --color-focus: var(--river-500);
+
+  /* Semantic — river scene */
+  --color-water-deep: var(--river-900);
+  --color-water: var(--river-700);
+  --color-water-surface: var(--river-500);
+  --color-water-glint: var(--river-300);
+  --color-on-water: var(--paper-100);
+
+  /* Semantic — insect orders */
+  --color-mayfly: var(--sulphur);
+  --color-caddis: var(--tan);
+  --color-stonefly: var(--golden);
+  --color-midge: var(--spinner);
+  --color-terrestrial: var(--grass);
 
   /* Type — families */
-  --font-display: "Zilla Slab", Rockwell, "Roboto Slab", Georgia, serif;
-  --font-body: "Public Sans Variable", "Public Sans", system-ui, sans-serif;
+  --font-display: "Young Serif", Georgia, serif;
+  --font-body: "Atkinson Hyperlegible Next Variable", "Atkinson Hyperlegible Next", system-ui, sans-serif;
 
-  /* Type — modular scale (1.25, base 1rem) */
+  /* Type — modular scale (1.25, base 1.0625rem) */
   --text-sm: 0.875rem;
-  --text-md: 1rem;
-  --text-lg: 1.25rem;
-  --text-xl: 1.5625rem;
-  --text-2xl: 1.953rem;
-  --text-3xl: clamp(2.441rem, 5vw + 1rem, 3.815rem);
-  --text-4xl: clamp(2.8rem, 7vw + 1rem, 5.96rem);
-  --leading-tight: 1.05;
+  --text-md: 1.0625rem;
+  --text-lg: 1.3125rem;
+  --text-xl: 1.625rem;
+  --text-2xl: 2.0625rem;
+  --text-3xl: clamp(2.5rem, 5vw + 1rem, 3.875rem);
+  --text-4xl: clamp(3rem, 8vw + 1rem, 7rem);
+  --leading-tight: 1.04;
   --leading-body: 1.55;
   --measure: 62ch;
 
@@ -59,7 +78,8 @@
   --space-24: 6rem;
 
   /* Shape */
-  --radius-sm: 3px;
+  --radius-sm: 4px;
+  --radius-md: 10px;
   --radius-pill: 999px;
   --rule-width: 1px;
 

@@ -20,7 +20,8 @@
 }
 
 .primary:hover {
-  background: var(--color-text-muted);
+  background: var(--color-action-hover);
+  border-color: var(--color-action-hover);
 }
 
 .quiet {

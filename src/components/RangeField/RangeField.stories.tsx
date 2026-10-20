@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useState } from "react";
 import { expect, userEvent } from "storybook/test";
-import { MONTHS } from "@/lib/cashflow";
+import { MONTHS } from "@/lib/hatches";
 import { RangeField, type RangeFieldProps } from "./RangeField";
 
 function Controlled(props: Omit<RangeFieldProps, "onChange">) {
@@ -13,10 +13,10 @@ const meta = {
   title: "Components/RangeField",
   component: Controlled,
   args: {
-    label: "Harvest month",
-    value: 8,
-    min: 7,
-    max: 10,
+    label: "Month",
+    value: 9,
+    min: 0,
+    max: 11,
     format: (i: number): string => MONTHS[i],
   },
 } satisfies Meta<typeof Controlled>;
@@ -24,22 +24,21 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const HarvestMonth: Story = {
+export const Month: Story = {
   play: async ({ canvas }) => {
-    const slider = canvas.getByRole("slider", { name: "Harvest month" });
+    const slider = canvas.getByRole("slider", { name: "Month" });
     slider.focus();
     await userEvent.keyboard("{ArrowRight}");
-    await expect(slider).toHaveAttribute("aria-valuetext", "Oct");
+    await expect(slider).toHaveAttribute("aria-valuetext", "Nov");
   },
 };
 
-export const Yield: Story = {
+export const WaterTemperature: Story = {
   args: {
-    label: "Yield vs. a normal year",
-    value: 100,
-    min: 50,
-    max: 130,
-    step: 5,
-    format: (v: number) => `${v}%`,
+    label: "Water temperature",
+    value: 48,
+    min: 34,
+    max: 68,
+    format: (v: number) => `${v}°F`,
   },
 };

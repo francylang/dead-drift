@@ -1,7 +1,7 @@
 import type { Preview } from "@storybook/nextjs-vite";
-import "@fontsource/zilla-slab/500.css";
-import "@fontsource/zilla-slab/700.css";
-import "@fontsource-variable/public-sans";
+import "@fontsource/young-serif";
+import "@fontsource-variable/atkinson-hyperlegible-next";
+import "@fontsource-variable/atkinson-hyperlegible-next/wght-italic.css";
 import "../src/styles/tokens.css";
 import "../src/app/globals.css";
 

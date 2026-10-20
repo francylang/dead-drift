@@ -1,0 +1,74 @@
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--color-text);
+}
+
+/* Ruled rows like a field book: glyph | name + taxon | strength | hooks, note underneath. */
+.row {
+  display: grid;
+  grid-template-columns: 2.75rem 1fr auto auto;
+  grid-template-areas:
+    "glyph what strength hooks"
+    "glyph note note note";
+  align-items: baseline;
+  column-gap: var(--space-4);
+  row-gap: var(--space-1);
+  padding: var(--space-4) 0;
+  border-bottom: var(--rule-width) solid var(--color-rule);
+  background: var(--color-bg);
+}
+
+.glyph {
+  grid-area: glyph;
+  align-self: center;
+}
+
+.what {
+  grid-area: what;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-2);
+  align-items: baseline;
+}
+
+.name {
+  font: var(--text-lg) / 1.2 var(--font-display);
+}
+
+.taxon {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.strength {
+  grid-area: strength;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.strength[data-intensity="3"] {
+  color: var(--color-action);
+}
+
+.hooks {
+  grid-area: hooks;
+  min-width: 4.5rem;
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.note {
+  grid-area: note;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.empty {
+  padding: var(--space-6) 0;
+  border-top: 2px solid var(--color-text);
+  color: var(--color-text-muted);
+}

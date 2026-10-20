@@ -8,12 +8,18 @@ const COLORS = [
   "--color-text",
   "--color-text-muted",
   "--color-rule",
-  "--color-income",
-  "--color-income-fill",
-  "--color-spend",
-  "--color-spend-fill",
   "--color-action",
+  "--color-action-hover",
   "--color-focus",
+  "--color-water-deep",
+  "--color-water",
+  "--color-water-surface",
+  "--color-water-glint",
+  "--color-mayfly",
+  "--color-caddis",
+  "--color-stonefly",
+  "--color-midge",
+  "--color-terrestrial",
 ];
 const TYPE = ["--text-4xl", "--text-3xl", "--text-2xl", "--text-xl", "--text-lg", "--text-md", "--text-sm"];
 const SPACE = ["--space-1", "--space-2", "--space-3", "--space-4", "--space-6", "--space-8", "--space-12", "--space-16", "--space-24"];
@@ -74,8 +80,8 @@ export const Type: Story = {
     <Table>
       {TYPE.map((name) => (
         <Row key={name} name={name}>
-          <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: `var(${name})`, lineHeight: 1.1 }}>
-            Harvest
+          <span style={{ fontFamily: "var(--font-display)", fontSize: `var(${name})`, lineHeight: 1.1 }}>
+            Hatch
           </span>
         </Row>
       ))}
