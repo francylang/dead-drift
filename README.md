@@ -7,8 +7,8 @@ Three pieces built around **Hatch**, an app that tells fly anglers what's hatchi
 | `/` | Index |
 | `/hatch` | Landing page. Season ribbon over a live river scene, scroll-drawn hatch chart, live conditions at Deckers. |
 | `/rivers` | Colorado Gold Medal rivers: live flow, trend, flow vs. normal for the date, water temp, today’s best hatch. |
-| `/rivers/[slug]` | One river: conditions, hour-by-hour hatch outlook for today and tomorrow, what’s in season. |
-| `/hatch/river` | Read the river. Month, water temperature, and time of day drive an animated hatch and the fly list. |
+| `/rivers/[slug]` | One river: conditions, hour-by-hour hatch outlook for today and tomorrow, and a planner for any other day. |
+| `/hatch/river` | Read the river. Pick any Gold Medal river; month, water temperature, and time of day drive an animated hatch and the fly list. |
 | `/storybook` | Component library. Design tokens, insect glyphs, hatch timeline, form controls, interaction + a11y tests. |
 
 Next.js 16 (App Router, Cache Components) · TypeScript · CSS Modules · [Motion](https://motion.dev) · Storybook 10

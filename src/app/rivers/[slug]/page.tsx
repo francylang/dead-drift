@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { HatchList } from "@/components/HatchList/HatchList";
 import { HatchTimeline } from "@/components/HatchTimeline/HatchTimeline";
 import { Readings } from "@/components/Readings/Readings";
+import { RiverPlanner } from "@/components/RiverPlanner/RiverPlanner";
 import { RiverScene } from "@/components/RiverScene/RiverScene";
 import { SiteHeader } from "@/components/SiteHeader/SiteHeader";
-import { getRiverConditions } from "@/lib/conditions";
+import { getConditions } from "@/lib/conditions";
 import { flowDetail, flowValue, normalDetail, normalValue, waterDetail, waterValue } from "@/lib/describe";
-import { seasonalHatches } from "@/lib/hatches";
 import { buildOutlook } from "@/lib/outlook";
+import { plannerRiver } from "@/lib/planner";
 import { RIVER_BY_SLUG, RIVERS, riverHatches } from "@/lib/rivers";
 import { formatClock, localParts } from "@/lib/time";
 import { getHourlyForecast } from "@/lib/weather";
@@ -28,7 +28,9 @@ export default async function RiverPage({ params }: PageProps<"/rivers/[slug]">)
   const river = RIVER_BY_SLUG[(await params).slug];
   if (!river) notFound();
 
-  const { takenAt, conditions: c } = await getRiverConditions(river);
+  const snapshot = await getConditions();
+  const { takenAt } = snapshot;
+  const c = snapshot.rivers[river.slug];
   const weather = await getHourlyForecast(...c.coords);
   const now = localParts(takenAt);
   const hatches = riverHatches(river);
@@ -42,7 +44,6 @@ export default async function RiverPage({ params }: PageProps<"/rivers/[slug]">)
   const onTheWater = days[0].hatches
     .filter((h) => h.peak && h.peak.score >= 0.33)
     .map((h) => ({ hatch: h.hatch, intensity: h.hatch.months[now.month] }));
-  const inSeason = seasonalHatches(now.month, hatches);
 
   return (
     <>
@@ -93,11 +94,15 @@ export default async function RiverPage({ params }: PageProps<"/rivers/[slug]">)
             <HatchTimeline days={days} currentHour={now.hour} />
           </section>
 
-          <section aria-labelledby="flies-title">
-            <h2 id="flies-title" className={styles.sectionTitle}>
-              In season this month
+          <section aria-labelledby="plan-title">
+            <h2 id="plan-title" className={styles.sectionTitle}>
+              Plan another day
             </h2>
-            <HatchList hatches={inSeason} empty="Nothing in season. Midge larvae and small nymphs, fished deep." />
+            <p className={styles.note}>
+              Starts from today on {river.name.endsWith("Creek") ? river.name : `the ${river.name}`}. Change the month, water temperature, or time of day to see what
+              would be rising.
+            </p>
+            <RiverPlanner rivers={[plannerRiver(river, snapshot)]} headingLevel={3} />
           </section>
 
           <p className={styles.source}>

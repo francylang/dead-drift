@@ -1,20 +1,17 @@
 import type { Metadata } from "next";
+import { RiverPlanner } from "@/components/RiverPlanner/RiverPlanner";
 import { SiteHeader } from "@/components/SiteHeader/SiteHeader";
-import { getRiverConditions } from "@/lib/conditions";
-import { RIVER_BY_SLUG } from "@/lib/rivers";
-import { localParts } from "@/lib/time";
-import { RiverPlanner } from "./RiverPlanner";
+import { getConditions } from "@/lib/conditions";
+import { plannerRiver } from "@/lib/planner";
+import { RIVERS } from "@/lib/rivers";
 import styles from "./river.module.css";
 
 export const metadata: Metadata = {
   title: "Read the river — Hatch",
 };
 
-const DECKERS = RIVER_BY_SLUG["south-platte-deckers"];
-
 export default async function ReadTheRiverPage() {
-  const { takenAt, conditions: c } = await getRiverConditions(DECKERS);
-  const { month } = localParts(takenAt);
+  const snapshot = await getConditions();
 
   return (
     <>
@@ -22,11 +19,10 @@ export default async function ReadTheRiverPage() {
       <main className={styles.page}>
         <h1 className={styles.title}>Read the river</h1>
         <p className={styles.intro}>
-          South Platte at Deckers. Starts from today: {c.waterF}°F
-          {c.tempSource === "estimate" ? " (estimated for the season)" : ` from gauge ${DECKERS.gauge.id}`}
-          {c.flowCfs !== null && `, ${c.flowCfs} cfs`}. Change anything to see what would be on the water.
+          Pick a Gold Medal river. It starts from today’s water temperature; change the month, temperature, or time of
+          day to see what would be on the water and what to tie on.
         </p>
-        <RiverPlanner today={{ month, waterF: c.waterF, time: "afternoon" }} />
+        <RiverPlanner rivers={RIVERS.map((r) => plannerRiver(r, snapshot))} initial="south-platte-deckers" />
       </main>
     </>
   );

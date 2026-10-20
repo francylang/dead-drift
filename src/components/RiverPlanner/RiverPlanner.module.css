@@ -1,0 +1,62 @@
+.layout {
+  display: grid;
+  gap: var(--space-8);
+  grid-template-areas:
+    "scene"
+    "controls"
+    "results";
+}
+
+@media (min-width: 60rem) {
+  .layout {
+    grid-template-columns: 20rem 1fr;
+    grid-template-areas:
+      "scene scene"
+      "controls results";
+    column-gap: var(--space-16);
+    align-items: start;
+  }
+}
+
+.scene {
+  grid-area: scene;
+  position: relative;
+  height: clamp(16rem, 45vh, 28rem);
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--color-water-deep);
+}
+
+.sceneCaption {
+  position: absolute;
+  left: var(--space-6);
+  bottom: var(--space-4);
+  font: var(--text-xl) / 1 var(--font-display);
+  color: var(--color-on-water);
+}
+
+.controls {
+  grid-area: controls;
+  display: grid;
+  gap: var(--space-6);
+  justify-items: stretch;
+}
+
+.controls > button {
+  justify-self: start;
+}
+
+.picker {
+  padding-bottom: var(--space-6);
+  border-bottom: var(--rule-width) solid var(--color-rule);
+}
+
+.results {
+  grid-area: results;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.resultsTitle {
+  font-size: var(--text-xl);
+}
