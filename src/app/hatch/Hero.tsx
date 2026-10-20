@@ -38,7 +38,7 @@ export function Hero({ hatches, currentMonth, where }: { hatches: Hatch[]; curre
         </div>
         <div className={styles.ribbon}>
           <MonthRibbon
-            label="Drag through the season"
+            label="Pick a month"
             value={month}
             onChange={setMonth}
             activity={activityByMonth(hatches)}

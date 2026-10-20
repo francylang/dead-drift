@@ -18,7 +18,7 @@ const meta = {
   title: "Components/MonthRibbon",
   component: Controlled,
   args: {
-    label: "Drag through the season",
+    label: "Pick a month",
     activity: activityByMonth(),
     currentMonth: 9,
   },

@@ -19,7 +19,7 @@ export interface MonthRibbonProps {
 
 /**
  * Twelve months as a native radio group (arrow keys, screen readers, form semantics),
- * plus pointer scrubbing: press anywhere on the ribbon and drag to sweep through the year.
+ * plus pointer scrubbing as a bonus: press and drag across the ribbon to sweep through the year.
  */
 export function MonthRibbon({ label, value, onChange, activity, currentMonth, tone = "paper" }: MonthRibbonProps) {
   const name = useId();
