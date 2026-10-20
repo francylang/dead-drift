@@ -1,0 +1,103 @@
+.scroller {
+  overflow-x: auto;
+}
+
+.chart {
+  width: 100%;
+  min-width: 44rem;
+  border-collapse: collapse;
+  table-layout: fixed;
+  border-top: 2px solid var(--color-text);
+}
+
+.corner,
+.name {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  width: 12rem;
+  background: var(--color-bg);
+  text-align: left;
+}
+
+.month,
+.hooks {
+  padding: var(--space-2) 0;
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.month abbr {
+  text-decoration: none;
+}
+
+.month[data-current] {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.hooks {
+  width: 4.5rem;
+  text-align: right;
+}
+
+.name {
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  border-bottom: var(--rule-width) solid var(--color-rule);
+  font: var(--text-md) / 1.15 var(--font-display);
+}
+
+.name > svg {
+  vertical-align: middle;
+  margin-right: var(--space-2);
+}
+
+.cell {
+  position: relative;
+  height: 2.5rem;
+  padding: 0.6rem 0;
+  border-bottom: var(--rule-width) solid var(--color-rule);
+}
+
+/* A rule down this month's column, drawn over the bars. */
+.cell[data-current]::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 50%;
+  width: 2px;
+  translate: -50% 0;
+  background: var(--color-text);
+}
+
+/* Cells butt together so a run of months reads as one continuous bar. */
+.fill {
+  position: relative;
+  display: block;
+  height: 100%;
+  transform-origin: left;
+}
+
+/* Same scale as the hourly outlook: peak, good, around. Color, not opacity, so the reveal can own opacity. */
+.fill[data-intensity="3"] {
+  background: var(--color-likely);
+}
+
+.fill[data-intensity="2"] {
+  background: var(--color-possible);
+}
+
+.fill[data-intensity="1"] {
+  background: var(--color-slight);
+}
+
+.hookSize {
+  padding-left: var(--space-3);
+  border-bottom: var(--rule-width) solid var(--color-rule);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

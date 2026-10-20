@@ -6,7 +6,7 @@ const WORK = [
   {
     href: "/hatch",
     title: "Hatch",
-    body: "A fly-fishing app for Colorado’s Gold Medal rivers. Scroll moves a pinned river through the year; river pages combine live USGS gauges and the NWS forecast into an hourly hatch outlook.",
+    body: "A fly-fishing app for Colorado’s Gold Medal rivers. Drag a season ribbon through the year, watch the hatch chart ink in as you scroll; river pages combine live USGS gauges and the NWS forecast into an hourly hatch outlook.",
   },
   {
     href: "/storybook",

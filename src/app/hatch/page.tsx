@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/Button/Button";
+import { HatchChart } from "@/components/HatchChart/HatchChart";
 import { HatchList } from "@/components/HatchList/HatchList";
 import { Readings } from "@/components/Readings/Readings";
 import { SiteHeader } from "@/components/SiteHeader/SiteHeader";
@@ -41,14 +42,15 @@ const DECKERS = RIVER_BY_SLUG["south-platte-deckers"];
 export default async function HatchPage() {
   const { takenAt, conditions: c } = await getRiverConditions(DECKERS);
   const { month } = localParts(takenAt);
-  const now = activeHatches({ month, waterF: c.waterF, time: "afternoon" }, riverHatches(DECKERS));
+  const hatches = riverHatches(DECKERS);
+  const now = activeHatches({ month, waterF: c.waterF, time: "afternoon" }, hatches);
 
   return (
     <>
       <SiteHeader />
 
       <main>
-        <Hero startMonth={month} />
+        <Hero hatches={hatches} currentMonth={month} />
 
         <section className={styles.section} aria-labelledby="now-title">
           <h2 id="now-title" className={styles.sectionTitle}>
@@ -70,6 +72,20 @@ export default async function HatchPage() {
             <Link href={`/rivers/${DECKERS.slug}`}>Hourly outlook for Deckers</Link> or{" "}
             <Link href="/rivers">all {RIVERS.length} Gold Medal rivers</Link>.
           </p>
+        </section>
+
+        <section className={styles.section} aria-labelledby="chart-title">
+          <h2 id="chart-title" className={styles.sectionTitle}>
+            A year on the South Platte
+          </h2>
+          <p className={styles.chartIntro}>
+            The hatch chart every fly shop pins by the register. Darker means heavier; the line marks this month.
+          </p>
+          <HatchChart
+            hatches={hatches}
+            currentMonth={month}
+            caption="Hatch chart for the South Platte at Deckers: how strong each hatch is by month, with hook sizes."
+          />
         </section>
 
         <section className={styles.section} aria-labelledby="how-title">

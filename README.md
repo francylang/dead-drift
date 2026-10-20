@@ -5,7 +5,7 @@ Three pieces built around **Hatch**, an app that tells fly anglers what's hatchi
 | Route | Piece |
 | --- | --- |
 | `/` | Index |
-| `/hatch` | Landing page. Scrolling moves a pinned river through the year; live conditions at Deckers. |
+| `/hatch` | Landing page. Season ribbon over a live river scene, scroll-drawn hatch chart, live conditions at Deckers. |
 | `/rivers` | Colorado Gold Medal rivers: live flow, trend, flow vs. normal for the date, water temp, today’s best hatch. |
 | `/rivers/[slug]` | One river: conditions, hour-by-hour hatch outlook for today and tomorrow, what’s in season. |
 | `/hatch/river` | Read the river. Month, water temperature, and time of day drive an animated hatch and the fly list. |
@@ -64,6 +64,6 @@ src/
 
 - **Palette from the subject.** Field-book yellow paper and graphite for the page; a tailwater at dusk for the river; each insect order has its own color against the water.
 - **Type.** Young Serif for display, Atkinson Hyperlegible Next for body. Italic is reserved for Latin names.
-- **One orchestrated motion moment.** On the landing page, scroll drives the month and the river's insects change with it. The rest of the page is still.
+- **No scroll-jacking.** The hero opens on this month's river; a season ribbon (drag, click, or arrow keys) sweeps through the year and its bars show the season's shape. The one scroll-linked moment is the hatch chart, which inks in row by row as it passes and reverses on the way back up. The page always scrolls normally.
 - **Motion answers input in the planner.** Insects fade in and out by species, list rows reorder with layout animation, the segmented control's pill slides. `prefers-reduced-motion` freezes insects in place and makes every transition instant.
 - **Accessible by construction.** The segmented control is a native radio group. The river SVG is decorative; the hatch list and live regions carry the same information as text.

@@ -248,3 +248,12 @@ export const TYPICAL_WATER_F = {
   tailwater: [39, 39, 40, 42, 45, 48, 51, 53, 52, 49, 44, 40],
   freestone: [33, 33, 36, 41, 46, 50, 57, 59, 53, 45, 38, 34],
 } as const;
+
+/** How much is hatching each month, 0–1 relative to the busiest month. */
+export function activityByMonth(hatches: Hatch[] = HATCHES): number[] {
+  const totals = MONTHS.map((_, i) =>
+    hatches.reduce((sum, h) => sum + (h.order === "crustacean" ? 0 : h.months[i]), 0),
+  );
+  const max = Math.max(1, ...totals);
+  return totals.map((t) => t / max);
+}

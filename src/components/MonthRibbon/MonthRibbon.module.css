@@ -1,0 +1,118 @@
+.fieldset {
+  --ink: var(--color-text);
+  --ink-muted: var(--color-text-muted);
+  --bar: var(--color-action);
+  --marker: var(--color-surface);
+
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.fieldset[data-tone="water"] {
+  --ink: var(--color-on-water);
+  --ink-muted: var(--color-water-glint);
+  --bar: var(--color-mayfly);
+  --marker: rgb(255 255 255 / 0.12);
+}
+
+.legend {
+  padding: 0;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+.track {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  touch-action: pan-y; /* horizontal drags scrub; vertical drags still scroll the page */
+  user-select: none;
+  cursor: ew-resize;
+}
+
+.month {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: 3rem auto;
+  justify-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+  cursor: inherit;
+}
+
+.input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.month:has(.input:focus-visible) {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+  border-radius: var(--radius-sm);
+}
+
+.fieldset[data-tone="water"] .month:has(.input:focus-visible) {
+  outline-color: var(--color-mayfly);
+}
+
+.barWell {
+  position: relative;
+  display: flex;
+  align-items: end;
+  width: 40%;
+  max-width: 1.25rem;
+  height: 100%;
+}
+
+.bar {
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--bar);
+  opacity: 0.55;
+  transform-origin: bottom;
+}
+
+.month[data-checked] .bar {
+  opacity: 1;
+}
+
+.marker {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: var(--radius-sm);
+  background: var(--marker);
+}
+
+.name {
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+.month[data-checked] .name {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* Small dot under today's month. */
+.now {
+  position: absolute;
+  bottom: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+@media (max-width: 30rem) {
+  .name {
+    font-size: 0.75rem;
+  }
+}
