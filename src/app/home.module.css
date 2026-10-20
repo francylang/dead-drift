@@ -1,0 +1,42 @@
+.page {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: var(--space-24) var(--gutter);
+}
+
+.name {
+  font-size: var(--text-3xl);
+  margin-bottom: var(--space-4);
+}
+
+.intro {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-12);
+}
+
+.list {
+  margin: 0 0 var(--space-12);
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--color-text);
+}
+
+.item {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-6) 0;
+  border-bottom: var(--rule-width) solid var(--color-rule);
+}
+
+.link {
+  font: 700 var(--text-xl) / 1.2 var(--font-display);
+  text-underline-offset: 5px;
+}
+
+.contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  font-weight: 600;
+}

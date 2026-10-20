@@ -1,0 +1,44 @@
+.figure {
+  margin: 0;
+  width: 100%;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.zero {
+  stroke: var(--color-rule);
+  stroke-width: 2;
+  stroke-dasharray: 2 8;
+  stroke-linecap: round;
+}
+
+.month {
+  font: 500 22px var(--font-body);
+  fill: var(--color-text-muted);
+  text-anchor: middle;
+}
+
+.line {
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.trough {
+  fill: var(--color-income-fill);
+  stroke: var(--color-text);
+  stroke-width: 4;
+}
+
+.troughLabel {
+  font: 700 30px var(--font-display);
+  fill: var(--color-spend);
+  text-anchor: middle;
+}
