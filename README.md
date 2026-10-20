@@ -5,7 +5,7 @@ Three pieces built around **Hatch**, an app that tells fly anglers what's hatchi
 | Route | Piece |
 | --- | --- |
 | `/` | Index |
-| `/hatch` | Landing page. Season ribbon over a live river scene, scroll-drawn hatch chart, live conditions at Deckers. |
+| `/hatch` | Landing page. Statewide season ribbon over a river scene, today's top three rivers, scroll-drawn hatch chart for any river. |
 | `/rivers` | Colorado Gold Medal rivers: live flow, trend, flow vs. normal for the date, water temp, today’s best hatch. |
 | `/rivers/[slug]` | One river: conditions, hour-by-hour hatch outlook for today and tomorrow, and a planner for any other day. |
 | `/hatch/river` | Read the river. Pick any Gold Medal river; month, water temperature, and time of day drive an animated hatch and the fly list. |

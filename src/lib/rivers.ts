@@ -223,3 +223,21 @@ export function riverHatches(river: River): Hatch[] {
     return { ...HATCH_LIBRARY[entry.id], months: entry.months };
   });
 }
+
+/**
+ * Every hatch on any Gold Medal river, with each month at its strongest across rivers.
+ * Drives the statewide view on the landing page.
+ */
+export function statewideHatches(): Hatch[] {
+  const byId = new Map<string, Hatch>();
+  for (const river of RIVERS) {
+    for (const hatch of riverHatches(river)) {
+      const seen = byId.get(hatch.id);
+      byId.set(
+        hatch.id,
+        seen ? { ...seen, months: seen.months.map((m, i) => Math.max(m, hatch.months[i])) as Months } : hatch,
+      );
+    }
+  }
+  return [...byId.values()];
+}

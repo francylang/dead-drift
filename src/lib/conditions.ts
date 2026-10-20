@@ -1,6 +1,6 @@
 import { cacheLife } from "next/cache";
 import { TYPICAL_WATER_F } from "./hatches";
-import { RIVERS, type River } from "./rivers";
+import { RIVERS } from "./rivers";
 import { localParts } from "./time";
 import { getFlowNormals, getGauges, type FlowNormal } from "./usgs";
 
@@ -69,11 +69,6 @@ export async function getConditions(): Promise<ConditionsSnapshot> {
   );
 
   return { takenAt, rivers };
-}
-
-export async function getRiverConditions(river: River) {
-  const snapshot = await getConditions();
-  return { takenAt: snapshot.takenAt, conditions: snapshot.rivers[river.slug] };
 }
 
 /** Rising or falling when the last 24h moved more than 10%. */

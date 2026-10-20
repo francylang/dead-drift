@@ -12,7 +12,7 @@ const list = new Intl.ListFormat("en-US", { style: "long", type: "conjunction" }
  * Opens on this month's river. The season ribbon along the bottom lets you drag
  * through the year; its bars show how much is hatching each month.
  */
-export function Hero({ hatches, currentMonth }: { hatches: Hatch[]; currentMonth: number }) {
+export function Hero({ hatches, currentMonth, where }: { hatches: Hatch[]; currentMonth: number; where: string }) {
   const [month, setMonth] = useState(currentMonth);
   const onTheWater = seasonalHatches(month, hatches);
 
@@ -32,8 +32,8 @@ export function Hero({ hatches, currentMonth }: { hatches: Hatch[]; currentMonth
           </p>
           <p className={styles.monthHatches}>
             {onTheWater.length > 0
-              ? `${list.format(onTheWater.map((h) => h.hatch.plural))} on the South Platte`
-              : "Quiet water on the South Platte"}
+              ? `${list.format(onTheWater.slice(0, 5).map((h) => h.hatch.plural))} ${where}`
+              : `Quiet water ${where}`}
           </p>
         </div>
         <div className={styles.ribbon}>

@@ -2,11 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader/SiteHeader";
 import { getConditions } from "@/lib/conditions";
-import { bestBet, flowValue, normalValue, TREND_MARK, waterValue } from "@/lib/describe";
-import { buildOutlook } from "@/lib/outlook";
-import { RIVERS, riverHatches } from "@/lib/rivers";
-import { formatClock, localParts } from "@/lib/time";
-import { getHourlyForecast } from "@/lib/weather";
+import { flowValue, normalValue, TREND_MARK, waterValue } from "@/lib/describe";
+import { formatClock } from "@/lib/time";
+import { allRiversToday } from "@/lib/today";
 import styles from "./rivers.module.css";
 
 export const metadata: Metadata = {
@@ -15,20 +13,9 @@ export const metadata: Metadata = {
 };
 
 export default async function RiversPage() {
-  const { takenAt, rivers } = await getConditions();
-  const { month } = localParts(takenAt);
-
-  const rows = await Promise.all(
-    RIVERS.map(async (river) => {
-      const c = rivers[river.slug];
-      const weather = await getHourlyForecast(...c.coords);
-      const [today] = buildOutlook(
-        { hatches: riverHatches(river), month, waterF: c.waterF, tempSource: c.tempSource, kind: river.kind, weather },
-        takenAt,
-      );
-      return { river, c, best: bestBet(today.hatches) };
-    }),
-  );
+  const snapshot = await getConditions();
+  const { takenAt } = snapshot;
+  const rows = await allRiversToday(snapshot);
 
   return (
     <>
@@ -54,7 +41,7 @@ export default async function RiversPage() {
             </tr>
           </thead>
           <tbody>
-            {rows.map(({ river, c, best }) => (
+            {rows.map(({ river, conditions: c, best }) => (
               <tr key={river.slug} data-band={c.band ?? undefined}>
                 <th scope="row" className={styles.river}>
                   <Link href={`/rivers/${river.slug}`} className={styles.link}>

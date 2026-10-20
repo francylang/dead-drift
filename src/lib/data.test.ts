@@ -121,3 +121,12 @@ describe("outlook", () => {
     expect(today.weather).toHaveLength(15);
   });
 });
+
+describe("ranking", () => {
+  test("strongest hatch first, ties keep list order", async () => {
+    const { rankRivers } = await import("./today");
+    const r = (slug: string, score: number) => ({ river: RIVER_BY_SLUG[slug], score }) as never;
+    const ranked = rankRivers([r("blue", 0.4), r("fryingpan", 0.9), r("taylor", 0.4)]);
+    expect(ranked.map((x: { river: { slug: string } }) => x.river.slug)).toEqual(["fryingpan", "blue", "taylor"]);
+  });
+});

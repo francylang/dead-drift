@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/Button/Button";
-import { HatchChart } from "@/components/HatchChart/HatchChart";
-import { HatchList } from "@/components/HatchList/HatchList";
-import { Readings } from "@/components/Readings/Readings";
 import { SiteHeader } from "@/components/SiteHeader/SiteHeader";
-import { getRiverConditions } from "@/lib/conditions";
-import { flowDetail, flowValue, normalDetail, normalValue, waterDetail, waterValue } from "@/lib/describe";
-import { activeHatches } from "@/lib/hatches";
-import { RIVER_BY_SLUG, RIVERS, riverHatches } from "@/lib/rivers";
+import { getConditions } from "@/lib/conditions";
+import { normalValue } from "@/lib/describe";
+import { RIVERS, riverHatches, statewideHatches } from "@/lib/rivers";
 import { formatClock, localParts } from "@/lib/time";
+import { allRiversToday, rankRivers } from "@/lib/today";
 import { Hero } from "./Hero";
+import { RiverHatchChart } from "./RiverHatchChart";
 import styles from "./hatch.module.css";
 
 export const metadata: Metadata = {
@@ -21,7 +19,7 @@ export const metadata: Metadata = {
 const SIGNALS = [
   {
     title: "Water temperature",
-    body: "Each insect hatches inside a temperature window. Hatch reads the river’s USGS gauge, or the season’s typical temperature when the gauge doesn’t report one.",
+    body: "Each insect hatches inside a temperature window. Hatch reads every river’s USGS gauge, or the season’s typical temperature when a gauge doesn’t report one.",
   },
   {
     title: "Time of year",
@@ -37,54 +35,69 @@ const SIGNALS = [
   },
 ];
 
-const DECKERS = RIVER_BY_SLUG["south-platte-deckers"];
+const FLOW_PHRASE = { low: "low for the date", normal: "normal for the date", high: "high for the date" } as const;
 
 export default async function HatchPage() {
-  const { takenAt, conditions: c } = await getRiverConditions(DECKERS);
-  const { month } = localParts(takenAt);
-  const hatches = riverHatches(DECKERS);
-  const now = activeHatches({ month, waterF: c.waterF, time: "afternoon" }, hatches);
+  const snapshot = await getConditions();
+  const { month } = localParts(snapshot.takenAt);
+  const ranked = rankRivers(await allRiversToday(snapshot));
+  const top = ranked.slice(0, 3);
 
   return (
     <>
       <SiteHeader />
 
       <main>
-        <Hero hatches={hatches} currentMonth={month} />
+        <Hero hatches={statewideHatches()} currentMonth={month} where="on Colorado’s Gold Medal rivers" />
 
-        <section className={styles.section} aria-labelledby="now-title">
-          <h2 id="now-title" className={styles.sectionTitle}>
-            This afternoon at Deckers
+        <section className={styles.section} aria-labelledby="today-title">
+          <h2 id="today-title" className={styles.sectionTitle}>
+            Where to fish today
           </h2>
-          <Readings
-            items={[
-              { label: "Flow", value: flowValue(c), detail: flowDetail(c) },
-              { label: "Compared with normal", value: normalValue(c), detail: normalDetail(c, takenAt) },
-              { label: "Water", value: waterValue(c), detail: waterDetail(c) },
-            ]}
-          />
-          <div className={styles.nowList}>
-            <HatchList hatches={now} />
-          </div>
+          <p className={styles.chartIntro}>
+            Ranked by today’s strongest hatch, with blown-out water pushed down the list.
+          </p>
+          <ol className={styles.picks}>
+            {top.map(({ river, conditions: c, best }) => (
+              <li key={river.slug} className={styles.pick}>
+                <div className={styles.pickRiver}>
+                  <Link href={`/rivers/${river.slug}`} className={styles.pickName}>
+                    {river.name}
+                  </Link>
+                  <span className={styles.pickReach}>{river.reach}</span>
+                </div>
+                <p className={styles.pickHatch}>{best ? `${best.hatch.name}, ${best.label}` : "Nymph it deep"}</p>
+                <p className={styles.pickFlow}>
+                  {c.flowCfs === null
+                    ? `${c.waterF}°F water`
+                    : `${c.flowCfs.toLocaleString("en-US")} cfs${c.band ? `, ${FLOW_PHRASE[c.band]}` : ""}`}
+                  {c.pctOfMedian !== null && <span className="visually-hidden"> ({normalValue(c)} of median)</span>}
+                </p>
+              </li>
+            ))}
+          </ol>
           <p className={styles.source}>
-            Flow from USGS gauge {DECKERS.gauge.id}
-            {c.readAt && `, read ${formatClock(c.readAt)}`}. Refreshes every 15 minutes.{" "}
-            <Link href={`/rivers/${DECKERS.slug}`}>Hourly outlook for Deckers</Link> or{" "}
-            <Link href="/rivers">all {RIVERS.length} Gold Medal rivers</Link>.
+            Live USGS gauges and the National Weather Service forecast, refreshed every 15 minutes. Snapshot{" "}
+            {formatClock(snapshot.takenAt)}. <Link href="/rivers">See all {RIVERS.length} Gold Medal rivers</Link>.
           </p>
         </section>
 
         <section className={styles.section} aria-labelledby="chart-title">
           <h2 id="chart-title" className={styles.sectionTitle}>
-            A year on the South Platte
+            A year on the water
           </h2>
           <p className={styles.chartIntro}>
             The hatch chart every fly shop pins by the register. Darker means heavier; the line marks this month.
           </p>
-          <HatchChart
-            hatches={hatches}
+          <RiverHatchChart
+            rivers={RIVERS.map((r) => ({
+              slug: r.slug,
+              label: `${r.name}, ${r.reach}`,
+              region: r.region,
+              hatches: riverHatches(r),
+            }))}
+            initial={ranked[0].river.slug}
             currentMonth={month}
-            caption="Hatch chart for the South Platte at Deckers: how strong each hatch is by month, with hook sizes."
           />
         </section>
 
