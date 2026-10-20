@@ -10,7 +10,7 @@ const W = 1200;
 const H = 600;
 const SURFACE = 380;
 
-const SCALE: Record<Order, number> = { mayfly: 1, caddis: 1, stonefly: 1.35, midge: 0.6, terrestrial: 1.25 };
+const SCALE: Record<Order, number> = { mayfly: 1, caddis: 1, stonefly: 1.35, midge: 0.6, terrestrial: 1.25, crustacean: 0.7 };
 const PER_INTENSITY = 5;
 
 /** Small deterministic PRNG so server and client place insects identically. */

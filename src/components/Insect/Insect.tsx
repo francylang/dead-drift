@@ -37,6 +37,15 @@ const SHAPES: Record<Order, React.ReactNode> = {
       <path d="M27 19 L31 16" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
     </>
   ),
+  // Curled shrimp: segmented arc, tail fan, long antennae.
+  crustacean: (
+    <>
+      <path d="M8 14 Q10 26 24 26 Q32 26 34 20 L30 19 Q28 23 23 23 Q13 23 12 14 Z" />
+      <path d="M8 14 L4 10 M8 14 L3 16 M8 14 L5 19" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M33 19 Q38 12 40 4 M32 19 Q36 14 36 6" fill="none" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" />
+      <circle cx="31" cy="21" r="1.2" opacity="0.5" />
+    </>
+  ),
   // Chunky body, folded hind leg.
   terrestrial: (
     <>

@@ -1,7 +1,8 @@
 /**
- * Hatch data for the South Platte (Deckers / Cheesman Canyon / Dream Stream).
- * Timing and hook sizes follow The Fly Fishing Place's South Platte hatch chart.
- * Water-temperature windows are approximate working ranges, not from that chart.
+ * Hatch library. HATCHES is the South Platte set (Deckers / Cheesman Canyon), with timing
+ * and hook sizes from The Fly Fishing Place's South Platte chart. RIVER_HATCHES adds the
+ * signature hatches of other Gold Medal waters; rivers.ts picks from both and can override
+ * monthly timing per river. Water-temperature windows are approximate working ranges.
  */
 
 export const MONTHS = [
@@ -14,7 +15,7 @@ export const MONTH_NAMES = [
   "July", "August", "September", "October", "November", "December",
 ] as const;
 
-export type Order = "mayfly" | "caddis" | "stonefly" | "midge" | "terrestrial";
+export type Order = "mayfly" | "caddis" | "stonefly" | "midge" | "terrestrial" | "crustacean";
 export type TimeOfDay = "morning" | "afternoon" | "evening";
 
 /** 0 = absent, 1 = around, 2 = good, 3 = peak */
@@ -31,7 +32,7 @@ export interface Hatch {
   /** Intensity by month, Jan–Dec. */
   months: [Intensity, Intensity, Intensity, Intensity, Intensity, Intensity,
            Intensity, Intensity, Intensity, Intensity, Intensity, Intensity];
-  /** Water temperature window in °F. Null for terrestrials, which follow air temperature. */
+  /** Water temperature window in °F. Null when water temp doesn't gate it (terrestrials, mysis). */
   waterF: [number, number] | null;
   times: TimeOfDay[];
   note: string;
@@ -148,6 +149,63 @@ export const HATCHES: Hatch[] = [
   },
 ];
 
+/** Signature hatches of other Gold Medal waters. */
+export const RIVER_HATCHES: Hatch[] = [
+  {
+    id: "mothers-day-caddis",
+    plural: "Mother’s Day caddis",
+    name: "Mother’s Day caddis",
+    taxon: "Brachycentrus",
+    order: "caddis",
+    hooks: "14–16",
+    months: [0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0],
+    waterF: [51, 58],
+    times: ["afternoon", "evening"],
+    note: "Starts near 54°F. Blizzard hatches move upstream daily; nymph before the rise.",
+  },
+  {
+    id: "salmonfly",
+    plural: "salmonflies",
+    name: "Salmonfly",
+    taxon: "Pteronarcys californica",
+    order: "stonefly",
+    hooks: "4–8",
+    months: [0, 0, 0, 0, 2, 3, 0, 0, 0, 0, 0, 0],
+    waterF: [48, 60],
+    times: ["afternoon"],
+    note: "Big foam dries tight to the banks. Short window, worth planning around.",
+  },
+  {
+    id: "green-drake",
+    plural: "green drakes",
+    name: "Green drake",
+    taxon: "Drunella grandis",
+    order: "mayfly",
+    hooks: "10–12",
+    months: [0, 0, 0, 0, 0, 1, 3, 2, 1, 0, 0, 0],
+    waterF: [48, 60],
+    times: ["afternoon", "evening"],
+    note: "Big, slow duns that bring up the best fish. Cloudy afternoons are prime.",
+  },
+  {
+    id: "mysis",
+    plural: "mysis shrimp",
+    name: "Mysis shrimp",
+    taxon: "Mysis diluviana",
+    order: "crustacean",
+    hooks: "16–20",
+    months: [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+    waterF: null,
+    times: ["morning", "afternoon", "evening"],
+    note: "Not a hatch. Washed through the dam year-round; strongest in the first mile.",
+  },
+];
+
+/** Every hatch Hatch knows about, by id. */
+export const HATCH_LIBRARY: Record<string, Hatch> = Object.fromEntries(
+  [...HATCHES, ...RIVER_HATCHES].map((h) => [h.id, h]),
+);
+
 export interface RiverState {
   month: number; // 0–11
   waterF: number;
@@ -164,8 +222,8 @@ export interface ActiveHatch {
  * (terrestrials ignore water temp), and at the right time of day.
  * Sorted strongest first.
  */
-export function activeHatches({ month, waterF, time }: RiverState): ActiveHatch[] {
-  return HATCHES.flatMap((hatch) => {
+export function activeHatches({ month, waterF, time }: RiverState, hatches: Hatch[] = HATCHES): ActiveHatch[] {
+  return hatches.flatMap((hatch) => {
     const intensity = hatch.months[month];
     if (intensity === 0) return [];
     if (!hatch.times.includes(time)) return [];
@@ -175,14 +233,18 @@ export function activeHatches({ month, waterF, time }: RiverState): ActiveHatch[
 }
 
 /** Everything in season for a month, ignoring temperature and time. Used by the landing hero. */
-export function seasonalHatches(month: number): ActiveHatch[] {
-  return HATCHES.flatMap((hatch) =>
+export function seasonalHatches(month: number, hatches: Hatch[] = HATCHES): ActiveHatch[] {
+  return hatches.flatMap((hatch) =>
     hatch.months[month] > 0 ? [{ hatch, intensity: hatch.months[month] }] : [],
   ).sort((a, b) => b.intensity - a.intensity);
 }
 
 /**
- * Typical tailwater temperature below Cheesman by month, °F. Used when the gauge
- * doesn't report temperature. Rough, and labeled as an estimate in the UI.
+ * Typical water temperature by month, °F, used when a gauge doesn't report one.
+ * Rough, and always labeled as an estimate in the UI. Bottom-release tailwaters
+ * stay cool in summer and ice-free in winter; freestones swing with the seasons.
  */
-export const TYPICAL_WATER_F = [38, 38, 40, 44, 48, 52, 56, 58, 54, 48, 42, 38];
+export const TYPICAL_WATER_F = {
+  tailwater: [39, 39, 40, 42, 45, 48, 51, 53, 52, 49, 44, 40],
+  freestone: [33, 33, 36, 41, 46, 50, 57, 59, 53, 45, 38, 34],
+} as const;

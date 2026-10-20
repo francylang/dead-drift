@@ -1,81 +1,95 @@
 import { cacheLife } from "next/cache";
 import { TYPICAL_WATER_F } from "./hatches";
+import { RIVERS, type River } from "./rivers";
+import { localParts } from "./time";
+import { getFlowNormals, getGauges, type FlowNormal } from "./usgs";
 
-/** USGS 06701900 — South Platte River below Brush Creek near Trumbull (Deckers). */
-export const GAUGE = {
-  id: "06701900",
-  name: "South Platte at Deckers",
-  url: "https://waterdata.usgs.gov/monitoring-location/USGS-06701900/",
-};
+export type Trend = "rising" | "falling" | "steady";
+export type FlowBand = "low" | "normal" | "high";
 
-export interface Conditions {
-  month: number;
+export interface RiverConditions {
+  slug: string;
   flowCfs: number | null;
+  /** Change over the last ~24h. */
+  trend: Trend | null;
+  normal: FlowNormal | null;
+  /** Current flow as a percent of the median for today's date. */
+  pctOfMedian: number | null;
+  band: FlowBand | null;
   waterF: number;
-  /** "gauge" when USGS reported temperature, "estimate" when it's the monthly typical. */
   tempSource: "gauge" | "estimate";
-  /** ISO timestamp of the newest reading, or null if the gauge couldn't be reached. */
   readAt: string | null;
+  coords: [number, number];
 }
 
-interface IvValue {
-  value: string;
-  dateTime: string;
-}
-interface IvSeries {
-  variable: { variableCode: { value: string }[] };
-  values: { value: IvValue[] }[];
-}
-interface IvResponse {
-  value: { timeSeries: IvSeries[] };
+export interface ConditionsSnapshot {
+  /** When this snapshot was taken. Every page derives "today" from this. */
+  takenAt: string;
+  rivers: Record<string, RiverConditions>;
 }
 
-const denverMonth = (date: Date) =>
-  Number(new Intl.DateTimeFormat("en-US", { month: "numeric", timeZone: "America/Denver" }).format(date)) - 1;
-
-function latest(series: IvSeries[], code: string): IvValue | null {
-  const match = series.find((s) => s.variable.variableCode[0]?.value === code);
-  const values = match?.values[0]?.value ?? [];
-  const last = values.at(-1);
-  if (!last || Number(last.value) <= -999) return null; // USGS uses -999999 for missing
-  return last;
-}
+const SITE_IDS = RIVERS.map((r) => r.gauge.id);
 
 /**
- * Current flow and water temperature from the USGS Instantaneous Values service.
- * Cached for 15 minutes. Never throws: falls back to the monthly typical temperature.
+ * Current conditions for every river in one cached snapshot: one USGS IV request,
+ * one statistics request. Refreshes every 15 minutes.
  */
-export async function getConditions(): Promise<Conditions> {
+export async function getConditions(): Promise<ConditionsSnapshot> {
   "use cache";
   cacheLife({ stale: 300, revalidate: 900, expire: 86_400 });
 
-  const month = denverMonth(new Date());
-  const fallback: Conditions = {
-    month,
-    flowCfs: null,
-    waterF: TYPICAL_WATER_F[month],
-    tempSource: "estimate",
-    readAt: null,
-  };
+  const takenAt = new Date().toISOString();
+  const [gauges, normals] = await Promise.all([getGauges(SITE_IDS), getFlowNormals(SITE_IDS)]);
+  const today = localParts(takenAt);
+  const dayKey = `${today.month + 1}-${today.day}`;
 
-  try {
-    const url = `https://waterservices.usgs.gov/nwis/iv/?format=json&sites=${GAUGE.id}&parameterCd=00010,00060&siteStatus=active`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(5_000) });
-    if (!res.ok) return fallback;
-    const data = (await res.json()) as IvResponse;
-    const series = data.value.timeSeries;
+  const rivers = Object.fromEntries(
+    RIVERS.map((river) => {
+      const gauge = gauges[river.gauge.id];
+      const flow = gauge?.flow ?? [];
+      const latest = flow.at(-1) ?? null;
+      const tempC = gauge?.tempC.at(-1) ?? null;
+      const normal = normals[river.gauge.id]?.[dayKey] ?? null;
+      const pctOfMedian = latest && normal?.p50 ? Math.round((latest.value / normal.p50) * 100) : null;
 
-    const flow = latest(series, "00060");
-    const tempC = latest(series, "00010");
+      const conditions: RiverConditions = {
+        slug: river.slug,
+        flowCfs: latest ? Math.round(latest.value) : null,
+        trend: trendOf(flow.map((r) => r.value)),
+        normal,
+        pctOfMedian,
+        band: latest && normal ? bandOf(latest.value, normal) : null,
+        waterF: tempC ? Math.round(tempC.value * 1.8 + 32) : TYPICAL_WATER_F[river.kind][today.month],
+        tempSource: tempC ? "gauge" : "estimate",
+        readAt: latest?.at ?? tempC?.at ?? null,
+        coords: gauge?.coords ?? river.coords,
+      };
+      return [river.slug, conditions];
+    }),
+  );
 
-    return {
-      month,
-      flowCfs: flow ? Math.round(Number(flow.value)) : null,
-      waterF: tempC ? Math.round(Number(tempC.value) * 1.8 + 32) : TYPICAL_WATER_F[month],
-      tempSource: tempC ? "gauge" : "estimate",
-      readAt: flow?.dateTime ?? tempC?.dateTime ?? null,
-    };
-  } catch {
-    return fallback;
-  }
+  return { takenAt, rivers };
+}
+
+export async function getRiverConditions(river: River) {
+  const snapshot = await getConditions();
+  return { takenAt: snapshot.takenAt, conditions: snapshot.rivers[river.slug] };
+}
+
+/** Rising or falling when the last 24h moved more than 10%. */
+export function trendOf(values: number[]): Trend | null {
+  if (values.length < 2) return null;
+  const first = values[0];
+  const last = values[values.length - 1];
+  if (first <= 0) return "steady";
+  const change = (last - first) / first;
+  if (change > 0.1) return "rising";
+  if (change < -0.1) return "falling";
+  return "steady";
+}
+
+export function bandOf(flow: number, normal: FlowNormal): FlowBand {
+  if (flow < normal.p25) return "low";
+  if (flow > normal.p75) return "high";
+  return "normal";
 }

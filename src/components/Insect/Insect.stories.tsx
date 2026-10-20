@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import type { Order } from "@/lib/hatches";
 import { Insect } from "./Insect";
 
-const ORDERS: Order[] = ["mayfly", "caddis", "stonefly", "midge", "terrestrial"];
+const ORDERS: Order[] = ["mayfly", "caddis", "stonefly", "midge", "terrestrial", "crustacean"];
 
 const meta = {
   title: "Components/Insect",

@@ -5,8 +5,8 @@ import styles from "./home.module.css";
 const WORK = [
   {
     href: "/hatch",
-    title: "Hatch landing page",
-    body: "Marketing page for an invented fly-fishing app. Scroll moves a pinned river through the year; live flow from a USGS gauge.",
+    title: "Hatch",
+    body: "A fly-fishing app for Colorado’s Gold Medal rivers. Scroll moves a pinned river through the year; river pages combine live USGS gauges and the NWS forecast into an hourly hatch outlook.",
   },
   {
     href: "/storybook",

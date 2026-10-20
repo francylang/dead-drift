@@ -1,0 +1,128 @@
+.timeline {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.timeline > fieldset {
+  max-width: 18rem;
+}
+
+/* The grid is wider than a phone; it scrolls sideways with the hatch names pinned. */
+.scroller {
+  overflow-x: auto;
+  border-top: 2px solid var(--color-text);
+}
+
+.grid {
+  width: 100%;
+  min-width: 44rem;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.corner,
+.name,
+.weatherLabel {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  width: 11rem;
+  background: var(--color-bg);
+  text-align: left;
+}
+
+.hour {
+  padding: var(--space-2) 0;
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.name {
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  border-bottom: var(--rule-width) solid var(--color-rule);
+  font: var(--text-md) / 1.15 var(--font-display);
+  font-weight: 400;
+}
+
+.name > svg {
+  vertical-align: middle;
+  margin-right: var(--space-2);
+}
+
+.cell {
+  height: 2.75rem;
+  padding: 3px 1px;
+  border-bottom: var(--rule-width) solid var(--color-rule);
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-sm);
+  transform-origin: bottom;
+}
+
+.fill[data-level="likely"],
+.swatch[data-level="likely"] {
+  background: var(--color-likely);
+}
+
+.fill[data-level="possible"],
+.swatch[data-level="possible"] {
+  background: var(--color-possible);
+}
+
+.fill[data-level="slight"],
+.swatch[data-level="slight"] {
+  background: var(--color-slight);
+}
+
+.hour[data-past],
+.cell[data-past],
+.weather[data-past] {
+  opacity: 0.4;
+}
+
+.weatherLabel,
+.weather {
+  padding: var(--space-1) 0;
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.weather {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.swatch {
+  width: 1rem;
+  height: 1rem;
+  border-radius: var(--radius-sm);
+}
+
+.empty {
+  padding: var(--space-6) 0;
+  border-top: 2px solid var(--color-text);
+  color: var(--color-text-muted);
+}

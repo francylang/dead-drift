@@ -2,24 +2,33 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/Button/Button";
 import { HatchList } from "@/components/HatchList/HatchList";
-import { getConditions, GAUGE } from "@/lib/conditions";
+import { Readings } from "@/components/Readings/Readings";
+import { SiteHeader } from "@/components/SiteHeader/SiteHeader";
+import { getRiverConditions } from "@/lib/conditions";
+import { flowDetail, flowValue, normalDetail, normalValue, waterDetail, waterValue } from "@/lib/describe";
 import { activeHatches } from "@/lib/hatches";
+import { RIVER_BY_SLUG, RIVERS, riverHatches } from "@/lib/rivers";
+import { formatClock, localParts } from "@/lib/time";
 import { Hero } from "./Hero";
 import styles from "./hatch.module.css";
 
 export const metadata: Metadata = {
   title: "Hatch — know what’s coming off the water",
-  description: "Hatch reads river gauges and the season to tell you which insects are hatching and what to tie on.",
+  description: "Live river gauges, the forecast, and the season, turned into what’s hatching and what to tie on.",
 };
 
 const SIGNALS = [
   {
     title: "Water temperature",
-    body: "Each insect hatches inside a temperature window. Hatch reads the nearest USGS gauge, or the season’s typical temperature when the gauge doesn’t report one.",
+    body: "Each insect hatches inside a temperature window. Hatch reads the river’s USGS gauge, or the season’s typical temperature when the gauge doesn’t report one.",
   },
   {
     title: "Time of year",
     body: "Midges carry the winter, caddis and PMDs own late spring, tricos fill August mornings, and blue-winged olives bookend the season.",
+  },
+  {
+    title: "The forecast",
+    body: "Cloud cover, wind, and air temperature from the National Weather Service, hour by hour. Gray afternoons bring olives; a warm breeze puts hoppers on the water.",
   },
   {
     title: "Time of day",
@@ -27,55 +36,39 @@ const SIGNALS = [
   },
 ];
 
+const DECKERS = RIVER_BY_SLUG["south-platte-deckers"];
+
 export default async function HatchPage() {
-  const conditions = await getConditions();
-  const now = activeHatches({ month: conditions.month, waterF: conditions.waterF, time: "afternoon" });
+  const { takenAt, conditions: c } = await getRiverConditions(DECKERS);
+  const { month } = localParts(takenAt);
+  const now = activeHatches({ month, waterF: c.waterF, time: "afternoon" }, riverHatches(DECKERS));
 
   return (
     <>
-      <header className={styles.bar}>
-        <Link href="/hatch" className={styles.wordmark}>
-          Hatch
-        </Link>
-        <nav aria-label="Product">
-          <Link href="/hatch/river">Read the river</Link>
-        </nav>
-      </header>
+      <SiteHeader />
 
       <main>
-        <Hero startMonth={conditions.month} />
+        <Hero startMonth={month} />
 
         <section className={styles.section} aria-labelledby="now-title">
-          <div className={styles.nowHeader}>
-            <h2 id="now-title" className={styles.sectionTitle}>
-              This afternoon at Deckers
-            </h2>
-            <dl className={styles.readings}>
-              <div>
-                <dt>Flow</dt>
-                <dd>{conditions.flowCfs === null ? "Unavailable" : `${conditions.flowCfs} cfs`}</dd>
-              </div>
-              <div>
-                <dt>Water</dt>
-                <dd>
-                  {conditions.waterF}°F
-                  {conditions.tempSource === "estimate" && <span className={styles.estimate}> estimated</span>}
-                </dd>
-              </div>
-            </dl>
+          <h2 id="now-title" className={styles.sectionTitle}>
+            This afternoon at Deckers
+          </h2>
+          <Readings
+            items={[
+              { label: "Flow", value: flowValue(c), detail: flowDetail(c) },
+              { label: "Compared with normal", value: normalValue(c), detail: normalDetail(c, takenAt) },
+              { label: "Water", value: waterValue(c), detail: waterDetail(c) },
+            ]}
+          />
+          <div className={styles.nowList}>
+            <HatchList hatches={now} />
           </div>
-          <HatchList hatches={now} />
           <p className={styles.source}>
-            Flow from USGS gauge <a href={GAUGE.url}>{GAUGE.id}</a>
-            {conditions.readAt &&
-              `, read ${new Date(conditions.readAt).toLocaleString("en-US", {
-                timeZone: "America/Denver",
-                month: "short",
-                day: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-              })}`}
-            . Refreshes every 15 minutes.
+            Flow from USGS gauge {DECKERS.gauge.id}
+            {c.readAt && `, read ${formatClock(c.readAt)}`}. Refreshes every 15 minutes.{" "}
+            <Link href={`/rivers/${DECKERS.slug}`}>Hourly outlook for Deckers</Link> or{" "}
+            <Link href="/rivers">all {RIVERS.length} Gold Medal rivers</Link>.
           </p>
         </section>
 
@@ -104,12 +97,12 @@ export default async function HatchPage() {
 
       <footer className={styles.footer}>
         <p>
-          Hatch is a fictional product, designed and built by <Link href="/">Francy Kessler</Link>. Hatch timing and
-          hook sizes follow{" "}
+          Hatch is a portfolio project designed and built by <Link href="/">Francy Kessler</Link>. South Platte hatch
+          timing and hook sizes follow{" "}
           <a href="https://theflyfishingplace.com/pages/south-platte-river-colorado-hatch-chart">
-            The Fly Fishing Place’s South Platte chart
+            The Fly Fishing Place’s chart
           </a>
-          ; temperature windows are approximate.
+          ; other rivers draw on regional charts and shop reports. Temperature windows are approximate.
         </p>
       </footer>
     </>

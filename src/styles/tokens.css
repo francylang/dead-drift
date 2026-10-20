@@ -24,6 +24,7 @@
   --tan: #d9c08a;
   --golden: #e2b04a;
   --grass: #a6b85a;
+  --mysis: #ead3cc;
 
   /* Semantic — page */
   --color-bg: var(--paper-200);
@@ -49,6 +50,12 @@
   --color-stonefly: var(--golden);
   --color-midge: var(--spinner);
   --color-terrestrial: var(--grass);
+  --color-crustacean: var(--mysis);
+
+  /* Semantic — outlook */
+  --color-likely: var(--river-700);
+  --color-possible: var(--river-300);
+  --color-slight: var(--paper-400);
 
   /* Type — families */
   --font-display: "Young Serif", Georgia, serif;
